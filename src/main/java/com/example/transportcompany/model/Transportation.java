@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,10 +20,10 @@ public class Transportation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="transportation_id")
-    long transportationID;
+    UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "transport_company_id")
+    @JoinColumn(name = "company_id")
     TransportCompany company;
 
     @ManyToOne
@@ -43,6 +45,25 @@ public class Transportation {
     @Column(name="payment_status")
     boolean paymentStatus;
 
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "transportation_has_customer",
+            joinColumns = @JoinColumn(name = "transportation_id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id")
+    )
+    List<Customer>customerList;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "transportation_has_load",
+            joinColumns = @JoinColumn(name = "transportation_id"),
+            inverseJoinColumns = @JoinColumn(name = "load_id")
+
+    )
+    List<Load>loadList;
 
 
 }

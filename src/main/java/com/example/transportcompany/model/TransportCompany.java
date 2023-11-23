@@ -3,8 +3,8 @@ package com.example.transportcompany.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,8 +17,8 @@ import java.util.List;
 public class TransportCompany {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transport_company_id")
-    long transportCompanyID;
+    @Column(name = "company_id")
+    UUID id;
 
     @Column(name = "company_name")
     String companyName;
@@ -29,8 +29,8 @@ public class TransportCompany {
     @OneToMany(mappedBy = "company")
     List<Vehicle>vehicleList;
 
-
     @OneToMany(mappedBy = "company")
     List<Transportation>transportationList;
+
 
 }

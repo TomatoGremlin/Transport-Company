@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,10 +19,10 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="employee_id")
-    long employeeID;
+    UUID id;
 
     @ManyToOne()
-    @JoinTable(name = "transport_company_id")
+    @JoinTable(name = "company_id")
     TransportCompany company;
 
     @Column(name="employee_name")

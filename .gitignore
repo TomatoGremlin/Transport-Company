@@ -26,7 +26,6 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 
-/src/main/resources/application.properties
 
 
 ### NetBeans ###
@@ -38,3 +37,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+## removed the Intellij folders and file ##
+/src/main/resources/application.properties
+/.gradle
+/gradle
+/.idea
+/gradlew
+/gradlew.bat

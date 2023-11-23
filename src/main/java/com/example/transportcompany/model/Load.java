@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -12,15 +13,18 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "transportation_profit")
+@Table(name = "load")
 @Entity
-public class TransportationProfit {
+public class Load {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="transportation_profit_id")
-    long profitID;
+    @Column(name="load_id")
+    UUID id;
 
-    @Column(name="transportation_price")
-    BigDecimal transportation_price;
+    @Column(name="load_weight")
+    double loadWeight;
+
+    @ManyToMany(mappedBy = "loadList")
+    List<Transportation> transportationList;
 
 }

@@ -4,21 +4,26 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "delivery_item")
+@Table(name = "transportation_rate")
 @Entity
-public class DeliveryItem {
+public class TransportationRate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="delivery_item_id")
-    long deliveryItemID;
+    @Column(name = "rate_id")
+    UUID id;
 
-    @Column(name="item_weight")
-    double itemWeight;
+    @Column(name ="customer")
+    BigDecimal customerRate;
 
+    @Column(name ="load")
+    BigDecimal loadRate;
 }

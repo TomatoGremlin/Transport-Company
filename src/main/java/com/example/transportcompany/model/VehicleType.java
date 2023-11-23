@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,7 +19,7 @@ public class VehicleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="vehicle_type_id")
-    long vehicleTypeID;
+    UUID id;
 
     @OneToOne(mappedBy = "vehicleType")
     Vehicle vehicle;
