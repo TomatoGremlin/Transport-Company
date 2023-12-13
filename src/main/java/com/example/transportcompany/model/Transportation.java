@@ -1,6 +1,7 @@
 package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,7 +21,7 @@ public class Transportation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="transportation_id")
-    UUID id;
+    long id;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -30,12 +31,15 @@ public class Transportation {
     @JoinColumn(name = "employee_id")
     Employee employee;
 
+    @NotBlank(message = "Start point cannot be left blank")
     @Column(name="start_point")
     String startPoint;
 
+    @NotBlank(message = "End point cannot be left blank")
     @Column(name="end_point")
     String endPoint;
 
+    @NotBlank(message = "Departure date cannot be left blank")
     @Column(name="departure_date")
     LocalDate departureDate;
 

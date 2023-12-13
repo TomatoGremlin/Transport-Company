@@ -1,10 +1,13 @@
 package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -19,11 +22,16 @@ public class VehicleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="vehicle_type_id")
-    UUID id;
+    long id;
+
+    @NotBlank(message = "Vehicle type cannot be left blank")
+    @Pattern(regexp = "^([a-z]).*", message = "Vehicle types begin with lowercase letters")
+    @Column(name="type", nullable = false)
+    String type;
 
     @OneToOne(mappedBy = "vehicleType")
     Vehicle vehicle;
 
     @ManyToMany(mappedBy = "vehicleTypeList")
-    List<Employee> employeeList;
+    Set<Employee> employeeList;
 }

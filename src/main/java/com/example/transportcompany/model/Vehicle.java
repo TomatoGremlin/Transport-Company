@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -19,7 +20,7 @@ public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vehicle_id")
-    UUID id;
+    long id;
 
     @ManyToOne()
     @JoinColumn(name = "company_id") // This is the foreign key column
@@ -30,6 +31,6 @@ public class Vehicle {
     VehicleType vehicleType;
 
     @ManyToMany(mappedBy = "vehicleList")
-    List<Employee>employeeList;
+    Set<Employee> employeeList;
 
 }

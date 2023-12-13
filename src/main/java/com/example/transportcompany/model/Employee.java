@@ -1,10 +1,11 @@
 package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -19,13 +20,17 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="employee_id")
-    UUID id;
+    long id;
 
+
+    //not to be null?
     @ManyToOne()
-    @JoinTable(name = "company_id")
+    @JoinColumn(name = "company_id")
     TransportCompany company;
 
-    @Column(name="employee_name")
+    @NotBlank(message = "Employee name cannot be left blank")
+    @Pattern(regexp = "^[A-Z][a-z]*$", message = "Employee names should start with a capital letter followed by lowercase")
+    @Column(name="employee_name", nullable = false)
     String name;
 
     @ManyToMany
@@ -34,7 +39,7 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "vehicle_id")
     )
-    List<Vehicle>vehicleList;
+    Set<Vehicle> vehicleList;
 
 
     @ManyToMany
@@ -43,9 +48,9 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "vehicle_type_id")
     )
-    List<VehicleType>vehicleTypeList;
+    Set<VehicleType>vehicleTypeList;
 
-    @OneToMany(mappedBy = "employeeList")
-    List<Transportation>transportationList;
+    @OneToMany(mappedBy = "employee")
+    Set<Transportation>transportationList;
 
 }
