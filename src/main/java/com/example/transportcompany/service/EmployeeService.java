@@ -14,9 +14,10 @@ import java.util.List;
 @Service
 public class EmployeeService {
     @Autowired
-    private EmployeeRepository employeeRepo;
+    private  EmployeeRepository employeeRepo;
     @Autowired
-    private TransportCompanyService companyService;
+    private  TransportCompanyService companyService;
+    //със конструктора     private final TransportCompanyService companyService;
 
     public void saveEmployee(EmployeeDTO employeeDTO) {
         Employee employeeToSave = new Employee();

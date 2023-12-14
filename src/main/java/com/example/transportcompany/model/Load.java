@@ -24,7 +24,7 @@ public class Load {
     long id;
 
     @Positive
-    //@DecimalMin(value = "1.0", inclusive = true, message = "Weight must be at least 1.0 kg")
+    //@Min(value = "1.0", inclusive = true, message = "Weight must be at least 1.0 kg")
     //@Digits(integer = 5, fraction = 2, message = "Maximum 5 digits with 2 decimal places allowed")
     @Column(name = "weight")
     double weight;

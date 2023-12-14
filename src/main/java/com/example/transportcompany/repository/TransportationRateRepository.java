@@ -7,5 +7,4 @@ import java.util.UUID;
 
 @Repository
 public interface TransportationRateRepository extends JpaRepository<TransportationRate, Long> {
-    // Additional custom query methods can be added here if needed
 }

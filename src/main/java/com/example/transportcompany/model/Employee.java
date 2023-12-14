@@ -23,11 +23,11 @@ public class Employee {
     long id;
 
 
-    //not to be null?
     @ManyToOne()
     @JoinColumn(name = "company_id")
     TransportCompany company;
 
+    //not null
     @NotBlank(message = "Employee name cannot be left blank")
     @Pattern(regexp = "^[A-Z][a-z]*$", message = "Employee names should start with a capital letter followed by lowercase")
     @Column(name="employee_name", nullable = false)
