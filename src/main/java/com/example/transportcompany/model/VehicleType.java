@@ -29,8 +29,8 @@ public class VehicleType {
     @Column(name="type", nullable = false)
     String type;
 
-    @OneToOne(mappedBy = "vehicleType")
-    Vehicle vehicle;
+    @OneToMany(mappedBy = "vehicleType")
+    Set<Vehicle> vehicles;
 
     @ManyToMany(mappedBy = "vehicleTypeList")
     Set<Employee> employeeList;

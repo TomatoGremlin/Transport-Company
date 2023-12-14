@@ -26,8 +26,8 @@ public class Vehicle {
     @JoinColumn(name = "company_id") // This is the foreign key column
     TransportCompany company;
 
-    @OneToOne()
-    @JoinColumn(name=  "vehicle_id")
+    @ManyToOne()
+    @JoinColumn(name= "vehicle_type_id")
     VehicleType vehicleType;
 
     @ManyToMany(mappedBy = "vehicleList")
