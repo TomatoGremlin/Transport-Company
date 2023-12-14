@@ -35,6 +35,11 @@ public class VehicleService {
     public void updateVehicleById(long vehicleId, VehicleDTO updatedVehicle) {
         Vehicle vehicleToUpdate = vehicleRepo.findById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with id: " + vehicleId));
+
+        //is there a point of changing the type
+        VehicleType newType = vehicleTypeService.findVehicleTypeById(updatedVehicle.getVehicleTypeId());
+        vehicleToUpdate.setVehicleType(newType);
+
         TransportCompany newCompany = companyService.findCompanyById(updatedVehicle.getCompanyId());
         vehicleToUpdate.setCompany(newCompany);
         vehicleToUpdate.setCompany(newCompany);

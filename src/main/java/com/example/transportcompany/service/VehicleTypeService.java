@@ -18,8 +18,6 @@ import java.util.List;
 public class VehicleTypeService {
     @Autowired
     private VehicleTypeRepository vehicleTypeRepo;
-    @Autowired
-    private TransportCompanyService companyService;
 
     public void saveVehicleType(VehicleTypeDTO vehicleTypeDTO) {
         VehicleType vehicleTypeToSave = new VehicleType();
