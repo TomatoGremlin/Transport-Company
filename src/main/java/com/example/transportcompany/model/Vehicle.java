@@ -1,6 +1,7 @@
 package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,12 +24,12 @@ public class Vehicle {
     long id;
 
     @ManyToOne()
-    @JoinColumn(name = "company_id") // This is the foreign key column
+    @JoinColumn(name = "company_id", nullable = false) // This is the foreign key column
     TransportCompany company;
 
-    //not null
+    @NotNull
     @ManyToOne()
-    @JoinColumn(name= "vehicle_type_id")
+    @JoinColumn(name= "vehicle_type_id", nullable = false)
     VehicleType vehicleType;
 
     @ManyToMany(mappedBy = "vehicleList")

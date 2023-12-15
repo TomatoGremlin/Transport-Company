@@ -4,7 +4,6 @@ import com.example.transportcompany.dto.TransportationRateDTO;
 import com.example.transportcompany.model.TransportCompany;
 import com.example.transportcompany.model.TransportationRate;
 import com.example.transportcompany.repository.TransportationRateRepository;
-import com.example.transportcompany.repository.TransportationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

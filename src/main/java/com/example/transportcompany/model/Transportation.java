@@ -33,22 +33,26 @@ public class Transportation {
     @JoinColumn(name = "employee_id")
     Employee employee;
 
+    @NotNull(message = "Transportation start point cannot be null")
     @NotBlank(message = "Start point cannot be left blank")
-    @Column(name="start_point")
+    @Column(name="start_point", nullable = false)
     String startPoint;
 
+    @NotNull(message = "Transportation end point cannot be null")
     @NotBlank(message = "End point cannot be left blank")
-    @Column(name="end_point")
+    @Column(name="end_point", nullable = false)
     String endPoint;
 
     @NotNull(message = "Departure date cannot be null")
-    @Column(name="departure_date")
+    @NotNull(message = "Departure date cannot be null")
+    @Column(name="departure_date", nullable = false)
     LocalDate departureDate;
 
     @Column(name="arrival_date")
     LocalDate arrivalDate;
 
-    @Column(name="payment_status")
+    @NotNull(message = "Payment status cannot be null")
+    @Column(name="payment_status", nullable = false)
     boolean paymentStatus;
 
     @ManyToMany

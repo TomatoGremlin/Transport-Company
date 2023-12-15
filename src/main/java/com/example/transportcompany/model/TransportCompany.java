@@ -22,6 +22,7 @@ public class TransportCompany {
     @Column(name = "company_id")
     long id;
 
+    @NotNull(message = "Company name cannot be null")
     @NotBlank(message = "Company name cannot be left blank")
     @Size(max = 30, message = "Company name has to be with up to 30 characters")
     @Pattern(regexp = "^([A-Z]).*", message = "Company names begin with capital letters")

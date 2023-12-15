@@ -3,6 +3,7 @@ package com.example.transportcompany.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,10 +24,12 @@ public class Load {
     @Column(name="load_id")
     long id;
 
+    @NotNull(message = "Load weight name cannot be null")
     @Positive
     //@Min(value = "1.0", inclusive = true, message = "Weight must be at least 1.0 kg")
+    //@Max
     //@Digits(integer = 5, fraction = 2, message = "Maximum 5 digits with 2 decimal places allowed")
-    @Column(name = "weight")
+    @Column(name = "weight", nullable = false)
     double weight;
 
     @ManyToMany(mappedBy = "loadList")

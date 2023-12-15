@@ -2,6 +2,7 @@ package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -27,7 +28,7 @@ public class Employee {
     @JoinColumn(name = "company_id")
     TransportCompany company;
 
-    //not null
+    @NotNull(message = "Employee name cannot be null")
     @NotBlank(message = "Employee name cannot be left blank")
     @Pattern(regexp = "^[A-Z][a-z]*$", message = "Employee names should start with a capital letter followed by lowercase")
     @Column(name="employee_name", nullable = false)

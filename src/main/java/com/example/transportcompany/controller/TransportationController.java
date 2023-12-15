@@ -1,10 +1,6 @@
 package com.example.transportcompany.controller;
 
-import com.example.transportcompany.dto.EmployeeDTO;
-import com.example.transportcompany.dto.TransportCompanyDTO;
 import com.example.transportcompany.dto.TransportationDTO;
-import com.example.transportcompany.service.EmployeeService;
-import com.example.transportcompany.service.TransportCompanyService;
 import com.example.transportcompany.service.TransportationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

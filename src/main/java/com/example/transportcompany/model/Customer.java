@@ -2,6 +2,7 @@ package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +25,7 @@ public class Customer {
     @Column(name="customer_id")
     long id;
 
+    @NotNull(message = "Customer name cannot be null")
     @NotBlank(message = "Customer name cannot be left blank")
     @Pattern(regexp = "^[A-Z][a-z]*$", message = "Customer names should start with a capital letter followed by lowercase")
     @Column(name="customer_name", nullable = false)

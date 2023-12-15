@@ -1,7 +1,5 @@
 package com.example.transportcompany.service;
 
-import com.example.transportcompany.dto.EmployeeDTO;
-import com.example.transportcompany.dto.TransportCompanyDTO;
 import com.example.transportcompany.dto.TransportationDTO;
 import com.example.transportcompany.model.*;
 import com.example.transportcompany.repository.CustomerRepository;
@@ -85,9 +83,8 @@ public class TransportationService {
                     .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
             Load load = loadRepo.findById(loadId)
                     .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
-            Set<Load>currentLoads = transportation.getLoadList();
-            currentLoads.add(load);
-            transportation.setLoadList(currentLoads);
+            Set<Load>updatedLoads = addLoadToSet(load, transportation);
+            transportation.setLoadList(updatedLoads);
             transportationRepo.save(transportation);
     }
 
@@ -96,10 +93,22 @@ public class TransportationService {
                 .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
         Customer customer = customerRepo.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
-        Set<Customer>currentCustomers =transportation.getCustomerList();
-        currentCustomers.add(customer);
-        transportation.setCustomerList(currentCustomers);
+        Set<Customer>updatedCustomers = addCustomerToSet(customer, transportation);
+        transportation.setCustomerList(updatedCustomers);
         transportationRepo.save(transportation);
+    }
+
+
+    public Set<Load> addLoadToSet(Load load, Transportation transportation){
+        Set<Load> currentLoads = transportation.getLoadList();
+        currentLoads.add(load);
+        return currentLoads;
+    }
+
+    public Set<Customer> addCustomerToSet(Customer customer, Transportation transportation){
+        Set<Customer> currentCustomers = transportation.getCustomerList();
+        currentCustomers.add(customer);
+        return currentCustomers;
     }
 
 }

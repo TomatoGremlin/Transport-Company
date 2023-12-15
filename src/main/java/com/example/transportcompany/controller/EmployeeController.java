@@ -32,5 +32,17 @@ public class EmployeeController {
         return ResponseEntity.ok("The Employee has been deleted");
     }
 
+    @PutMapping("/{employeeId}/add-driver-qualification/{vehicleTypeId}")
+    public ResponseEntity<String> addQualification(@PathVariable long employeeId, @PathVariable long vehicleTypeId){
+        employeeService.addQualification(employeeId, vehicleTypeId);
+        return ResponseEntity.ok("The Driver Qualification has been added to the Employee");
+    }
+    @PutMapping("/{employeeId}/assign-vehicle/{vehicleId}")
+    public ResponseEntity<String> assignVehicle(@PathVariable long employeeId, @PathVariable long vehicleId){
+        employeeService.assignVehicle(employeeId, vehicleId);
+        return ResponseEntity.ok("The Vehicle has been assigned to the Employee");
+    }
+
+
 }
 

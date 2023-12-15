@@ -2,6 +2,7 @@ package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "vehicle_type")
 @Entity
@@ -24,6 +26,7 @@ public class VehicleType {
     @Column(name="vehicle_type_id")
     long id;
 
+    @NotNull(message = "Vehicle type cannot be null")
     @NotBlank(message = "Vehicle type cannot be left blank")
     @Pattern(regexp = "^([a-z]).*", message = "Vehicle types begin with lowercase letters")
     @Column(name="type", nullable = false)
