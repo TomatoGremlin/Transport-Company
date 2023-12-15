@@ -1,7 +1,6 @@
 package com.example.transportcompany.service;
 
 import com.example.transportcompany.dto.EmployeeDTO;
-import com.example.transportcompany.dto.TransportCompanyDTO;
 import com.example.transportcompany.model.Employee;
 import com.example.transportcompany.model.TransportCompany;
 import com.example.transportcompany.repository.EmployeeRepository;
@@ -17,7 +16,6 @@ public class EmployeeService {
     private  EmployeeRepository employeeRepo;
     @Autowired
     private  TransportCompanyService companyService;
-    //със конструктора     private final TransportCompanyService companyService;
 
     public void saveEmployee(EmployeeDTO employeeDTO) {
         Employee employeeToSave = new Employee();

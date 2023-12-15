@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TransportationDTO {
     long companyId;
-    long employeeId;
     String startPoint;
     String endPoint;
     LocalDate departureDate;

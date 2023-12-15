@@ -7,5 +7,4 @@ import java.util.UUID;
 
 @Repository
 public interface LoadRepository extends JpaRepository<Load, Long> {
-    // Additional custom query methods can be added here if needed
 }

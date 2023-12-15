@@ -24,7 +24,7 @@ public class CustomerController {
         return ResponseEntity.ok("The Customer has been edited");
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id){
         customerService.deleteCustomerById(id);
         return ResponseEntity.ok("The Customer has been deleted");

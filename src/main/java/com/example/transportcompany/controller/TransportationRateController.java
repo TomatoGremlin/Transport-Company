@@ -28,7 +28,7 @@ public class TransportationRateController {
         return ResponseEntity.ok("The Transportation Rate has been edited");
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTransportationRate(@PathVariable Long id){
         transportationRateService.deleteTransportationRateById(id);
         return ResponseEntity.ok("The Transportation Rate has been deleted");

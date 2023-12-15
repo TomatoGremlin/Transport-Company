@@ -2,11 +2,13 @@ package com.example.transportcompany.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -39,7 +41,7 @@ public class Transportation {
     @Column(name="end_point")
     String endPoint;
 
-    @NotBlank(message = "Departure date cannot be left blank")
+    @NotNull(message = "Departure date cannot be null")
     @Column(name="departure_date")
     LocalDate departureDate;
 
@@ -49,15 +51,13 @@ public class Transportation {
     @Column(name="payment_status")
     boolean paymentStatus;
 
-
-
     @ManyToMany
     @JoinTable(
             name = "transportation_has_customer",
             joinColumns = @JoinColumn(name = "transportation_id"),
             inverseJoinColumns = @JoinColumn(name = "customer_id")
     )
-    List<Customer>customerList;
+    Set<Customer> customerList;
 
 
     @ManyToMany
@@ -67,7 +67,7 @@ public class Transportation {
             inverseJoinColumns = @JoinColumn(name = "load_id")
 
     )
-    List<Load>loadList;
+    Set<Load>loadList;
 
 
 }

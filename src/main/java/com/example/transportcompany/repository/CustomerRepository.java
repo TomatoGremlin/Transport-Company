@@ -7,5 +7,4 @@ import java.util.UUID;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
-    // Additional custom query methods can be added here if needed
 }

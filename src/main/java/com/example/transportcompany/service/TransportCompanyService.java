@@ -30,6 +30,7 @@ public class TransportCompanyService {
         companyToUpdate.setCompanyName(newName);
         companyRepo.save(companyToUpdate);
     }
+
     public void deleteCompanyById(long id) {
         companyRepo.deleteById(id);
     }
