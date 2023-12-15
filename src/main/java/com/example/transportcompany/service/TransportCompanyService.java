@@ -11,8 +11,12 @@ import java.util.List;
 
 @Service
 public class TransportCompanyService {
+    private final TransportCompanyRepository companyRepo;
     @Autowired
-    private TransportCompanyRepository companyRepo;
+    public TransportCompanyService(TransportCompanyRepository companyRepo) {
+        this.companyRepo = companyRepo;
+    }
+
 
     public void saveCompany(TransportCompanyDTO companyDTO) {
         TransportCompany companyToSave = new TransportCompany();

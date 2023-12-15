@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController {
+    private final EmployeeService employeeService;
     @Autowired
-    private EmployeeService employeeService;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
 
     @PostMapping("/add")
     public ResponseEntity<String> postEmployee(@RequestBody EmployeeDTO employeeDTO){

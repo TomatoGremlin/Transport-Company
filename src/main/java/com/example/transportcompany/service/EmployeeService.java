@@ -14,15 +14,20 @@ import java.util.Set;
 
 @Service
 public class EmployeeService {
+    private final EmployeeRepository employeeRepo;
+    private  final TransportCompanyService companyService;
+    private final VehicleRepository vehicleRepo;
+    private final VehicleTypeRepository vehicleTypeRepo;
     @Autowired
-    private  EmployeeRepository employeeRepo;
-    @Autowired
-    private  TransportCompanyService companyService;
-    @Autowired
-    private VehicleRepository vehicleRepo;
-    @Autowired
-    private VehicleTypeRepository vehicleTypeRepo;
-
+    public EmployeeService(EmployeeRepository employeeRepo,
+                           TransportCompanyService companyService,
+                           VehicleRepository vehicleRepo,
+                           VehicleTypeRepository vehicleTypeRepo) {
+        this.employeeRepo = employeeRepo;
+        this.companyService = companyService;
+        this.vehicleRepo = vehicleRepo;
+        this.vehicleTypeRepo = vehicleTypeRepo;
+    }
 
     public void saveEmployee(EmployeeDTO employeeDTO) {
         Employee employeeToSave = new Employee();

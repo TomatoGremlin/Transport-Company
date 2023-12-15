@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
+    private final CustomerService customerService;
     @Autowired
-    private CustomerService customerService;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
 
     @PostMapping("/add")
     public ResponseEntity<String> postCustomer(@RequestBody CustomerDTO customerDTO){

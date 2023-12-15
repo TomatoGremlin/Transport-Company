@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/load")
 public class LoadController {
+    private final LoadService loadService;
     @Autowired
-    private LoadService loadService;
+    public LoadController(LoadService loadService) {
+        this.loadService = loadService;
+    }
+
 
     @PostMapping("/add")
     public ResponseEntity<String> postLoad(@RequestBody LoadDTO loadDTO){

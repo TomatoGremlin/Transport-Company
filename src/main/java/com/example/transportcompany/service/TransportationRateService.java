@@ -13,10 +13,14 @@ import java.util.List;
 
 @Service
 public class TransportationRateService {
+    private final TransportationRateRepository transportationRateRepo;
+    private final TransportCompanyService companyService;
     @Autowired
-    private TransportationRateRepository transportationRateRepo;
-    @Autowired
-    private TransportCompanyService companyService;
+    public TransportationRateService(TransportationRateRepository transportationRateRepo,
+                                     TransportCompanyService companyService) {
+        this.transportationRateRepo = transportationRateRepo;
+        this.companyService = companyService;
+    }
 
     public void saveTransportationRate(TransportationRateDTO transportationRateDTO) {
         TransportationRate transportationRateToSave = new TransportationRate();

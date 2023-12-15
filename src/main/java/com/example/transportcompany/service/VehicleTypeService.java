@@ -11,8 +11,12 @@ import java.util.List;
 
 @Service
 public class VehicleTypeService {
+    private final VehicleTypeRepository vehicleTypeRepo;
     @Autowired
-    private VehicleTypeRepository vehicleTypeRepo;
+    public VehicleTypeService(VehicleTypeRepository vehicleTypeRepo) {
+        this.vehicleTypeRepo = vehicleTypeRepo;
+    }
+
 
     public void saveVehicleType(VehicleTypeDTO vehicleTypeDTO) {
         VehicleType vehicleTypeToSave = new VehicleType();

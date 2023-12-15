@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/transportation")
 public class TransportationController {
+    private final TransportationService transportationService;
     @Autowired
-    private TransportationService transportationService;
+    public TransportationController(TransportationService transportationService) {
+        this.transportationService = transportationService;
+    }
 
     @PostMapping("/add")
     public ResponseEntity<String> postTransportation(@RequestBody TransportationDTO transportationDTO){

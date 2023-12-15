@@ -16,16 +16,24 @@ import java.util.Set;
 
 @Service
 public class TransportationService {
+    private final TransportationRepository transportationRepo;
+    private final LoadRepository loadRepo;
+    private final EmployeeRepository employeeRepo;
+    private final CustomerRepository customerRepo;
+    private final TransportCompanyService companyService;
     @Autowired
-    private TransportationRepository transportationRepo;
-    @Autowired
-    private LoadRepository loadRepo;
-    @Autowired
-    private EmployeeRepository employeeRepo;
-    @Autowired
-    private CustomerRepository customerRepo;
-    @Autowired
-    private TransportCompanyService companyService;
+    public TransportationService(TransportationRepository transportationRepo,
+                                 LoadRepository loadRepo,
+                                 EmployeeRepository employeeRepo,
+                                 CustomerRepository customerRepo,
+                                 TransportCompanyService companyService) {
+        this.transportationRepo = transportationRepo;
+        this.loadRepo = loadRepo;
+        this.employeeRepo = employeeRepo;
+        this.customerRepo = customerRepo;
+        this.companyService = companyService;
+    }
+
 
     public void saveTransportation(TransportationDTO transportationDTO) {
         Transportation transportationToSave = new Transportation();

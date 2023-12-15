@@ -11,8 +11,12 @@ import java.util.List;
 
 @Service
 public class LoadService {
+    private final LoadRepository loadRepo;
     @Autowired
-    private LoadRepository loadRepo;
+    public LoadService(LoadRepository loadRepo) {
+        this.loadRepo = loadRepo;
+    }
+
     public void saveLoad(LoadDTO loadDTO) {
         Load loadToSave = new Load();
         loadToSave.setWeight(loadDTO.getWeight());

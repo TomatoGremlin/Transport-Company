@@ -15,12 +15,17 @@ import java.util.List;
 
 @Service
 public class VehicleService {
+    private final VehicleRepository vehicleRepo;
+    private final TransportCompanyService companyService;
+    private final VehicleTypeService vehicleTypeService;
     @Autowired
-    private VehicleRepository vehicleRepo;
-    @Autowired
-    private TransportCompanyService companyService;
-    @Autowired
-    private VehicleTypeService vehicleTypeService;
+    public VehicleService(VehicleRepository vehicleRepo,
+                          TransportCompanyService companyService,
+                          VehicleTypeService vehicleTypeService) {
+        this.vehicleRepo = vehicleRepo;
+        this.companyService = companyService;
+        this.vehicleTypeService = vehicleTypeService;
+    }
 
     public void saveVehicle(VehicleDTO vehicleDTO) {
         Vehicle vehicleToSave = new Vehicle();

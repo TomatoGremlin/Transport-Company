@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/vehicleType")
 public class VehicleTypeController {
+    private final VehicleTypeService vehicleTypeService;
     @Autowired
-    private VehicleTypeService vehicleTypeService;
+    public VehicleTypeController(VehicleTypeService vehicleTypeService) {
+        this.vehicleTypeService = vehicleTypeService;
+    }
 
     @PostMapping("/add")
     public ResponseEntity<String> postVehicleType(@RequestBody VehicleTypeDTO vehicleTypeDTO){
