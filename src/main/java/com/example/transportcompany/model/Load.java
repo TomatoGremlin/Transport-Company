@@ -1,5 +1,6 @@
 package com.example.transportcompany.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -32,6 +33,7 @@ public class Load {
     @Column(name = "weight", nullable = false)
     double weight;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "loadList")
     Set<Transportation> transportationList;
 

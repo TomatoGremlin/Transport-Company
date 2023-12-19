@@ -2,11 +2,15 @@ package com.example.transportcompany.controller;
 
 import com.example.transportcompany.dto.EmployeeDTO;
 import com.example.transportcompany.dto.TransportCompanyDTO;
+import com.example.transportcompany.model.Employee;
 import com.example.transportcompany.service.EmployeeService;
 import com.example.transportcompany.service.TransportCompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/employee")
@@ -44,6 +48,19 @@ public class EmployeeController {
     public ResponseEntity<String> assignVehicle(@PathVariable long employeeId, @PathVariable long vehicleId){
         employeeService.assignVehicle(employeeId, vehicleId);
         return ResponseEntity.ok("The Vehicle has been assigned to the Employee");
+    }
+
+
+    @GetMapping("/sortBySalary")
+    public ResponseEntity<List<Employee>> sortBySalary(){
+        List<Employee>sortedEmployees = employeeService.getAllEmployeesSortedByName();
+        return ResponseEntity.ok(sortedEmployees);
+    }
+
+    @GetMapping("/filterBySalary/{salary}")
+    public ResponseEntity<List<Employee>> filterBySalary(@PathVariable BigDecimal salary){
+        List<Employee>sortedEmployees = employeeService.filterBySalary(salary);
+        return ResponseEntity.ok(sortedEmployees);
     }
 
 

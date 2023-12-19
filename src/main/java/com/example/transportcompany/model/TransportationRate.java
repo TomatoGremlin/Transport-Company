@@ -30,6 +30,7 @@ public class TransportationRate {
     // price per person
     @NotNull(message = "Customer rate cannot be null")
     @Positive
+    @Digits(integer = 10, fraction = 2, message = "Maximum 10 digits with 2 decimal places allowed")
     @DecimalMin(value = "1.0", inclusive = true, message = "Customer rate must be greater than or equal to 1.0 lv")
     @Column(name ="customer_rate", nullable = false)
     BigDecimal customerRate;

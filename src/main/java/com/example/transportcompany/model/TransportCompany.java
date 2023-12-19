@@ -1,4 +1,5 @@
 package com.example.transportcompany.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 
 import jakarta.persistence.*;
@@ -30,15 +31,20 @@ public class TransportCompany {
     String companyName;
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonIgnore
     Set<Employee> employeeList;
 
     @OneToMany(mappedBy = "company")
+    @JsonIgnore
     Set<Vehicle>vehicleList;
 
+
     @OneToMany(mappedBy = "company")
+    @JsonIgnore
     Set<Transportation>transportationList;
 
     @OneToOne(mappedBy = "company")
+    @JsonIgnore
     TransportationRate transportationRate;
 
 }

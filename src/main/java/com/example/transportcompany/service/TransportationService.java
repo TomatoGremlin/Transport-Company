@@ -6,6 +6,7 @@ import com.example.transportcompany.repository.CustomerRepository;
 import com.example.transportcompany.repository.EmployeeRepository;
 import com.example.transportcompany.repository.LoadRepository;
 import com.example.transportcompany.repository.TransportationRepository;
+import com.example.transportcompany.util.TransportationUtil;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -117,6 +118,28 @@ public class TransportationService {
         Set<Customer> currentCustomers = transportation.getCustomerList();
         currentCustomers.add(customer);
         return currentCustomers;
+    }
+
+
+    public List<Transportation> sortByDestination() {
+        return transportationRepo.sortByEndPoint();
+    }
+
+    public List<Transportation> filterByDestination(String endPoint) {
+        return transportationRepo.filterByEndPoint(endPoint);
+    }
+
+
+    public void writeToFile(String fileName) {
+        String filePath = "FILES/" + fileName;
+        List<Transportation>transportations = findAllTransportation();
+        TransportationUtil.writeTransportations(filePath, transportations);
+    }
+
+    public String readFromFile(String fileName) {
+        //exception handling if file doesnt exist
+        String filePath = "FILES/" + fileName;
+        return TransportationUtil.readTransportations(filePath);
     }
 
 }

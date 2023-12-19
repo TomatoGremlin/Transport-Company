@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -99,5 +100,23 @@ public class EmployeeService {
         Set<VehicleType> currentQualifications = employee.getVehicleTypeList();
         currentQualifications.add(vehicleType);
         return currentQualifications;
+    }
+
+
+
+    public List<Employee> getAllEmployeesSortedByName() {
+        return employeeRepo.findAllSortedByName();
+    }
+
+    public List<Employee> sortBySalary() {
+        return employeeRepo.findAllSortedBySalary();
+    }
+
+    public List<Employee> getEmployeesByName(String driverQualification) {
+        return employeeRepo.findByDriverQualification(driverQualification);
+    }
+
+    public List<Employee> filterBySalary(BigDecimal salary) {
+        return employeeRepo.filterBySalary(salary);
     }
 }

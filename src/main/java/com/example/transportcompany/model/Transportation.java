@@ -1,5 +1,6 @@
 package com.example.transportcompany.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +14,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -27,6 +27,7 @@ public class Transportation {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     TransportCompany company;
 
     @ManyToOne
@@ -73,5 +74,17 @@ public class Transportation {
     )
     Set<Load>loadList;
 
+    @Override
+    public String toString() {
+        return "Transportation{" +
+                "id=" + id +
+                ", company=" + company.getCompanyName() +
+                ", startPoint='" + startPoint + '\'' +
+                ", endPoint='" + endPoint + '\'' +
+                ", departureDate=" + departureDate +
+                ", arrivalDate=" + arrivalDate +
+                ", paymentStatus=" + paymentStatus +
 
+                '}';
+    }
 }

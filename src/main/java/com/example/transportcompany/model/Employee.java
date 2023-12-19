@@ -1,17 +1,21 @@
 package com.example.transportcompany.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"company", "transportationList"})
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -26,6 +30,7 @@ public class Employee {
 
     @ManyToOne()
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     TransportCompany company;
 
     @NotNull(message = "Employee name cannot be null")
@@ -33,6 +38,10 @@ public class Employee {
     @Pattern(regexp = "^[A-Z][a-z]*$", message = "Employee names should start with a capital letter followed by lowercase")
     @Column(name="employee_name", nullable = false)
     String name;
+
+    @Digits(integer = 5, fraction = 2, message = "Maximum 5 digits with 2 decimal places allowed")
+    @Column(name="salary")
+    BigDecimal salary;
 
     @ManyToMany
     @JoinTable(
@@ -52,6 +61,7 @@ public class Employee {
     Set<VehicleType>vehicleTypeList;
 
     @OneToMany(mappedBy = "employee")
+    @JsonIgnore
     Set<Transportation>transportationList;
 
 }

@@ -1,0 +1,2 @@
+Transportation{id=1, company=Speedy, startPoint='City A', endPoint='City B', departureDate=2023-12-15, arrivalDate=2023-12-16, paymentStatus=false}
+Transportation{id=2, company=Speedy, startPoint='City B', endPoint='City A', departureDate=2023-12-20, arrivalDate=2023-12-25, paymentStatus=false}

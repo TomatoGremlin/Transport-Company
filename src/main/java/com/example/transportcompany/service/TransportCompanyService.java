@@ -43,5 +43,11 @@ public class TransportCompanyService {
         return companyRepo.findAll();
     }
 
+    public List<TransportCompany> getAllCompaniesSortedByName() {
+        return companyRepo.sortAllByNameAscending();
+    }
+    public List<TransportCompany> getCompaniesFilteredByName(String companyName) {
+        return companyRepo.filterByName(companyName);
+    }
 
 }

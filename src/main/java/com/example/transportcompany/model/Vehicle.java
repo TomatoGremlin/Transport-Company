@@ -1,5 +1,6 @@
 package com.example.transportcompany.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -32,6 +33,7 @@ public class Vehicle {
     @JoinColumn(name= "vehicle_type_id", nullable = false)
     VehicleType vehicleType;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "vehicleList")
     Set<Employee> employeeList;
 

@@ -1,5 +1,6 @@
 package com.example.transportcompany.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ public class Customer {
     @Column(name="customer_name", nullable = false)
     String customerName;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "customerList")
     Set<Transportation> transportationList;
 
