@@ -142,4 +142,9 @@ public class TransportationService {
         return TransportationUtil.readTransportations(filePath);
     }
 
+    public String getInfo() {
+
+        return "info";
+    }
+
 }

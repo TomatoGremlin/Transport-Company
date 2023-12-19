@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -38,13 +39,26 @@ public class TransportCompanyController {
 
     @GetMapping("/sortByName")
     public ResponseEntity<List<TransportCompany>> sortByName(){
-        List<TransportCompany>sortedCompanies = companyService.getAllCompaniesSortedByName();
+        List<TransportCompany>sortedCompanies = companyService.sortedByName();
         return ResponseEntity.ok(sortedCompanies);
     }
 
     @GetMapping("/filterByName/{name}")
     public ResponseEntity<List<TransportCompany>> filterByName(@PathVariable String name){
-        List<TransportCompany>filteredCompanies= companyService.getCompaniesFilteredByName(name);
+        List<TransportCompany>filteredCompanies= companyService.filteredByName(name);
+        return ResponseEntity.ok(filteredCompanies);
+    }
+
+
+    @GetMapping("/sortByRevenue")
+    public ResponseEntity<List<TransportCompany>> sortByRevenue(){
+        List<TransportCompany>sortedCompanies = companyService.sortByRevenue();
+        return ResponseEntity.ok(sortedCompanies);
+    }
+
+    @GetMapping("/filterByRevenue/{revenue}")
+    public ResponseEntity<List<TransportCompany>> filterByRevenue(@PathVariable BigDecimal revenue){
+        List<TransportCompany>filteredCompanies= companyService.filterByRevenueGreaterThan(revenue);
         return ResponseEntity.ok(filteredCompanies);
     }
 

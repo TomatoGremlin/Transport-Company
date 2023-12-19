@@ -36,6 +36,7 @@ public class EmployeeService {
         long companyId = employeeDTO.getCompanyId();
         TransportCompany transportCompany = companyService.findCompanyById(companyId);
         employeeToSave.setCompany(transportCompany);
+        employeeToSave.setSalary(employeeDTO.getSalary());
         employeeRepo.save(employeeToSave);
     }
     public void updateEmployeeById(long employeeId, EmployeeDTO updatedEmployee) {
@@ -43,8 +44,10 @@ public class EmployeeService {
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
 
         String newName = updatedEmployee.getName();
+        BigDecimal newSalary = updatedEmployee.getSalary();
         TransportCompany newCompany = companyService.findCompanyById(updatedEmployee.getCompanyId());
         employeeToUpdate.setName(newName);
+        employeeToUpdate.setSalary(newSalary);
         employeeToUpdate.setCompany(newCompany);
         employeeRepo.save(employeeToUpdate);
     }
@@ -104,19 +107,17 @@ public class EmployeeService {
 
 
 
-    public List<Employee> getAllEmployeesSortedByName() {
-        return employeeRepo.findAllSortedByName();
+    public List<Employee> sortedByQualification() {
+        return employeeRepo.sortedByQualification();
     }
-
+    public List<Employee>filteredByQualification(long qualificationId) {
+        return employeeRepo.filteredByQualification(qualificationId);
+    }
     public List<Employee> sortBySalary() {
-        return employeeRepo.findAllSortedBySalary();
+        return employeeRepo.sortedBySalary();
     }
 
-    public List<Employee> getEmployeesByName(String driverQualification) {
-        return employeeRepo.findByDriverQualification(driverQualification);
-    }
-
-    public List<Employee> filterBySalary(BigDecimal salary) {
-        return employeeRepo.filterBySalary(salary);
+    public List<Employee> filterBySalaryGreaterThan(BigDecimal salary) {
+        return employeeRepo.filteredBySalaryGreaterThan(salary);
     }
 }

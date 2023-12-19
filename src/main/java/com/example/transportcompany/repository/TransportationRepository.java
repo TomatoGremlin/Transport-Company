@@ -15,4 +15,9 @@ public interface TransportationRepository extends JpaRepository<Transportation, 
 
     @Query("SELECT t FROM Transportation t WHERE LOWER(t.endPoint) LIKE %:endPoint% ")
     List<Transportation> filterByEndPoint(String endPoint);
+
+    @Query("SELECT COUNT(*) AS total_transportations FROM Transportation")
+    long getNumberOfTransportations();
+
+
 }

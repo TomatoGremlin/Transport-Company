@@ -7,6 +7,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -43,11 +44,19 @@ public class TransportCompanyService {
         return companyRepo.findAll();
     }
 
-    public List<TransportCompany> getAllCompaniesSortedByName() {
+    public List<TransportCompany> sortedByName() {
         return companyRepo.sortAllByNameAscending();
     }
-    public List<TransportCompany> getCompaniesFilteredByName(String companyName) {
+    public List<TransportCompany> filteredByName(String companyName) {
         return companyRepo.filterByName(companyName);
+    }
+
+
+    public List<TransportCompany> sortByRevenue() {
+        return companyRepo.sortedByRevenue();
+    }
+    public List<TransportCompany> filterByRevenueGreaterThan(BigDecimal revenue) {
+        return companyRepo.filteredByRevenueGreaterThan(revenue);
     }
 
 }

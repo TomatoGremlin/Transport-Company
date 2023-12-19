@@ -3,6 +3,8 @@ package com.example.transportcompany.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @ToString
@@ -11,5 +13,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EmployeeDTO {
     String name;
+    BigDecimal salary;
     long companyId;
+
 }
