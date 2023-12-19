@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -37,4 +36,11 @@ public class Load {
     @ManyToMany(mappedBy = "loadList")
     Set<Transportation> transportationList;
 
+    @Override
+    public String toString() {
+        return "Load{" +
+                "id=" + id +
+                ", weight=" + weight +
+                '}';
+    }
 }

@@ -3,7 +3,6 @@ package com.example.transportcompany.controller;
 import com.example.transportcompany.dto.TransportationDTO;
 import com.example.transportcompany.model.Transportation;
 import com.example.transportcompany.service.TransportationService;
-import com.example.transportcompany.util.TransportationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -77,6 +76,12 @@ public class TransportationController {
     public ResponseEntity<String> getAllTransportationInfoFromFile(@PathVariable String fileName) {
         String info = transportationService.readFromFile(fileName);
         return ResponseEntity.ok(info);
+    }
+
+    @GetMapping("/number-of-transportations/")
+    public ResponseEntity<Long> reportNumberTransportations() {
+        long report = transportationService.reportNumberOfTransportations();
+        return ResponseEntity.ok(report);
     }
 
 }

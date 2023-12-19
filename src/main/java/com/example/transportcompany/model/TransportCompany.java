@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -47,4 +46,15 @@ public class TransportCompany {
     @JsonIgnore
     TransportationRate transportationRate;
 
+    @Override
+    public String toString() {
+        return "TransportCompany{" +
+                "id=" + id +
+                ", companyName='" + companyName + '\'' +
+                ", employeeList=" + employeeList +
+                ", vehicleList=" + vehicleList +
+                ", transportationList=" + transportationList +
+                ", transportationRate=" + transportationRate.getId() +
+                '}';
+    }
 }

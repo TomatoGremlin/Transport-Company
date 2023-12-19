@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 @Service
 public class EmployeeService {
     private final EmployeeRepository employeeRepo;
-    private  final TransportCompanyService companyService;
+    private final TransportCompanyService companyService;
     private final VehicleRepository vehicleRepo;
     private final VehicleTypeRepository vehicleTypeRepo;
     @Autowired
@@ -69,7 +70,7 @@ public class EmployeeService {
         VehicleType vehicleType = vehicleTypeRepo.findById(vehicleTypeId)
                 .orElseThrow(() -> new EntityNotFoundException("VehicleType not found with id: " + vehicleTypeId));
         Set<VehicleType> updatesQualifications = addVehicleTypeToSet(vehicleType, employee);
-        employee.setVehicleTypeList(updatesQualifications);
+        employee.setQualifications(updatesQualifications);
         employeeRepo.save(employee);
     }
 
@@ -83,24 +84,24 @@ public class EmployeeService {
             throw new RuntimeException("The Employee holds no qualification to drive the Vehicle.");
         }
         Set<Vehicle> updatedVehicles = addVehicleToSet(vehicle, employee);
-        employee.setVehicleList(updatedVehicles);
+        employee.setVehicles(updatedVehicles);
         employeeRepo.save(employee);
     }
 
 
     public boolean checkVehicleQualificationMatch (Employee employee, Vehicle vehicle){
-       Set<VehicleType> driverQualifications = employee.getVehicleTypeList();
+       Set<VehicleType> driverQualifications = employee.getQualifications();
        VehicleType vehicleType = vehicle.getVehicleType();
        return driverQualifications.contains(vehicleType);
     }
 
     public Set<Vehicle> addVehicleToSet(Vehicle vehicle, Employee employee){
-        Set<Vehicle> currentVehicles = employee.getVehicleList();
+        Set<Vehicle> currentVehicles = employee.getVehicles();
         currentVehicles.add(vehicle);
         return currentVehicles;
     }
     public Set<VehicleType> addVehicleTypeToSet(VehicleType vehicleType, Employee employee){
-        Set<VehicleType> currentQualifications = employee.getVehicleTypeList();
+        Set<VehicleType> currentQualifications = employee.getQualifications();
         currentQualifications.add(vehicleType);
         return currentQualifications;
     }
@@ -119,5 +120,23 @@ public class EmployeeService {
 
     public List<Employee> filterBySalaryGreaterThan(BigDecimal salary) {
         return employeeRepo.filteredBySalaryGreaterThan(salary);
+    }
+
+
+    public HashMap<Employee, Long> reportNumberTransportationsPerEmployee(long companyId) {
+        TransportCompany company = companyService.findCompanyById(companyId);
+        Set<Employee>employees = company.getEmployeeList();
+        HashMap<Employee, Long> report= new HashMap<>();
+        long numberOftransportations;
+        for (Employee employee: employees) {
+            numberOftransportations= reportEmployeeNumberTransportations(employee.getId());
+            report.put(employee, numberOftransportations);
+        }
+        return report;
+    }
+    public long reportEmployeeNumberTransportations(long employeeId) {
+        Employee employee = findEmployeeById(employeeId);
+        Set<Transportation> employeeTransportations = employee.getTransportations();
+        return employeeTransportations.size();
     }
 }

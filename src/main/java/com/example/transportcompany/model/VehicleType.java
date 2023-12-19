@@ -8,13 +8,10 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -39,6 +36,14 @@ public class VehicleType {
     Set<Vehicle> vehicles;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "vehicleTypeList")
+    @ManyToMany(mappedBy = "qualifications")
     Set<Employee> employeeList;
+
+    @Override
+    public String toString() {
+        return "VehicleType{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                '}';
+    }
 }

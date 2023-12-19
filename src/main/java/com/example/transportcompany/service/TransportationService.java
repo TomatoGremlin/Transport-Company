@@ -11,6 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -142,9 +143,14 @@ public class TransportationService {
         return TransportationUtil.readTransportations(filePath);
     }
 
-    public String getInfo() {
-
-        return "info";
+    public long reportNumberOfTransportations() {
+        return transportationRepo.getNumberOfTransportations();
     }
 
+    /*
+    public BigDecimal reportTransportationRevenue(long transportationId) {
+        double totalLoadWeight = transportationRepo.getTotalWeightOfLoadsByTransportationId(transportationId);
+        return transportationRepo.getRevenueOfTransportation(transportationId, totalLoadWeight);
+    }
+        */
 }

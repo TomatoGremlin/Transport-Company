@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -46,4 +45,14 @@ public class TransportationRate {
     @OneToOne
     @JoinColumn(name = "company_id")
     TransportCompany company;
+
+    @Override
+    public String toString() {
+        return "TransportationRate{" +
+                "id=" + id +
+                ", customerRate=" + customerRate +
+                ", loadRate=" + loadRate +
+                ", company=" + company.getId() +
+                '}';
+    }
 }

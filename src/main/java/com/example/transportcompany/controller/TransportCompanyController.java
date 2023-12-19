@@ -49,7 +49,7 @@ public class TransportCompanyController {
         return ResponseEntity.ok(filteredCompanies);
     }
 
-
+/*
     @GetMapping("/sortByRevenue")
     public ResponseEntity<List<TransportCompany>> sortByRevenue(){
         List<TransportCompany>sortedCompanies = companyService.sortByRevenue();
@@ -61,6 +61,6 @@ public class TransportCompanyController {
         List<TransportCompany>filteredCompanies= companyService.filterByRevenueGreaterThan(revenue);
         return ResponseEntity.ok(filteredCompanies);
     }
-
+*/
 }
 

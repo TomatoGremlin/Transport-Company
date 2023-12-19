@@ -2,7 +2,6 @@ package com.example.transportcompany.service;
 
 import com.example.transportcompany.dto.CustomerDTO;
 import com.example.transportcompany.model.Customer;
-import com.example.transportcompany.model.TransportCompany;
 import com.example.transportcompany.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

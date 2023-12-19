@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TransportCompanyService {
     private final TransportCompanyRepository companyRepo;
+
     @Autowired
     public TransportCompanyService(TransportCompanyRepository companyRepo) {
         this.companyRepo = companyRepo;
@@ -51,12 +53,36 @@ public class TransportCompanyService {
         return companyRepo.filterByName(companyName);
     }
 
-
+    /*
     public List<TransportCompany> sortByRevenue() {
         return companyRepo.sortedByRevenue();
     }
     public List<TransportCompany> filterByRevenueGreaterThan(BigDecimal revenue) {
         return companyRepo.filteredByRevenueGreaterThan(revenue);
     }
+
+
+    public BigDecimal reportCompanyRevenue(long companyId) {
+        TransportCompany company = findCompanyById(companyId);
+        Set<Transportation> transportations = company .getTransportations();
+        BigDecimal companyRevenue= BigDecimal.valueOf(0);
+        for (Transportation transportation: transportations) {
+            long id = transportation.getId();
+            double totalWeight = transportationRepo.getTotalWeightOfLoadsByTransportationId(id);
+            BigDecimal transportationRevenue = transportationRepo.getRevenueOfTransportation(id, totalWeight);
+            companyRevenue = companyRevenue.add(transportationRevenue);
+        }
+        return companyRevenue;
+    }
+
+    public BigDecimal reportAllEmployeesRevenue(long companyId) {
+
+        return "info";
+    }
+
+    public BigDecimal reportEmployeeRevenue(long companyId) {
+
+        return "info";
+    }*/
 
 }

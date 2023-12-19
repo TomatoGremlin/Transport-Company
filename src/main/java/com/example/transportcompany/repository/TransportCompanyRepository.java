@@ -17,7 +17,7 @@ public interface TransportCompanyRepository extends JpaRepository<TransportCompa
    @Query("SELECT c FROM TransportCompany c WHERE LOWER(c.companyName) LIKE %:name% ORDER BY c.companyName ASC")
    List<TransportCompany> filterByName(String name);
 
-   @Query("SELECT DISTINCT company " +
+   /*@Query("SELECT DISTINCT company " +
            "FROM TransportCompany company " +
            "LEFT JOIN company.transportationList t " +
            "LEFT JOIN t.customerList c " +
@@ -35,5 +35,7 @@ public interface TransportCompanyRepository extends JpaRepository<TransportCompa
            "HAVING COALESCE(SUM(c.size * l.weight), 0) > :revenueThreshold " +
            "ORDER BY COALESCE(SUM(c.size * l.weight), 0) DESC")
    List<TransportCompany> filteredByRevenueGreaterThan(@Param("revenueThreshold") BigDecimal revenueThreshold);
+   //BigDecimal getCompanyRevenue(@Param("companyId") long companyId);
 
+   */
 }

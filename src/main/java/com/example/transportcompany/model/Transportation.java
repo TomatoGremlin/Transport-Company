@@ -78,13 +78,12 @@ public class Transportation {
     public String toString() {
         return "Transportation{" +
                 "id=" + id +
-                ", company=" + company.getCompanyName() +
+                ", company=" + company.getId() +
                 ", startPoint='" + startPoint + '\'' +
                 ", endPoint='" + endPoint + '\'' +
                 ", departureDate=" + departureDate +
                 ", arrivalDate=" + arrivalDate +
                 ", paymentStatus=" + paymentStatus +
-
                 '}';
     }
 }

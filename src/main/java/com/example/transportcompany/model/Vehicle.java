@@ -6,13 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -24,6 +21,7 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     long id;
 
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "company_id", nullable = false) // This is the foreign key column
     TransportCompany company;
@@ -34,7 +32,14 @@ public class Vehicle {
     VehicleType vehicleType;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "vehicleList")
+    @ManyToMany(mappedBy = "vehicles")
     Set<Employee> employeeList;
 
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", vehicleType=" + vehicleType.getType() +
+                '}';
+    }
 }

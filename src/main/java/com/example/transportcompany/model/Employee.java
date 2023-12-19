@@ -11,11 +11,9 @@ import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
-@ToString(exclude = {"company", "transportationList"})
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -49,19 +47,31 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "vehicle_id")
     )
-    Set<Vehicle> vehicleList;
+    Set<Vehicle> vehicles;
 
 
     @ManyToMany
     @JoinTable(
-            name = "employee_drives_vehicle_type",
+            name = "employee_has_qualification",
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "vehicle_type_id")
     )
-    Set<VehicleType>vehicleTypeList;
+    Set<VehicleType> qualifications;
 
     @OneToMany(mappedBy = "employee")
     @JsonIgnore
-    Set<Transportation>transportationList;
+    Set<Transportation> transportations;
 
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", company=" + company.getId() +
+                ", name='" + name + '\'' +
+                ", salary=" + salary +
+                ", vehicles=" + vehicles +
+                ", qualifications=" + qualifications +
+                '}';
+    }
 }

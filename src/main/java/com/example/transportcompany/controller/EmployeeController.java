@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -71,6 +72,18 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> filterBySalary(@PathVariable BigDecimal salary){
         List<Employee>sortedEmployees = employeeService.filterBySalaryGreaterThan(salary);
         return ResponseEntity.ok(sortedEmployees);
+    }
+
+
+    @GetMapping("/all-number-of-transportations/{companyId}")
+    public ResponseEntity<HashMap<Employee, Long>> reportNumberTransportationsPerEmployee(@PathVariable long companyId) {
+        HashMap<Employee, Long> report= employeeService.reportNumberTransportationsPerEmployee(companyId);
+        return ResponseEntity.ok(report);
+    }
+    @GetMapping("/number-of-transportations/{employeeId}")
+    public ResponseEntity<Long> reportEmployeeNumberTransportations(@PathVariable long employeeId) {
+        long report = employeeService.reportEmployeeNumberTransportations(employeeId);
+        return ResponseEntity.ok(report);
     }
 
 

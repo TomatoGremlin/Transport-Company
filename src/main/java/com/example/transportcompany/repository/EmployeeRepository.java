@@ -15,7 +15,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("SELECT e FROM Employee e ORDER BY e.name ASC")
     List<Employee> sortedByQualification();
     // Query to filter employees by driver qualification
-    @Query("SELECT DISTINCT e FROM Employee e JOIN e.vehicleTypeList vt WHERE vt.id = :vehicleTypeId")
+    @Query("SELECT DISTINCT e FROM Employee e JOIN e.qualifications vt WHERE vt.id = :vehicleTypeId")
     List<Employee> filteredByQualification(@Param("vehicleTypeId") long vehicleTypeId);
 
     // Query to retrieve employees sorted by salary
