@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface TransportationRateRepository extends JpaRepository<TransportationRate, Long> {
-    List<TransportationRate> findByCompanyId(Long companyId);
+    TransportationRate findByCompanyId(Long companyId);
 }

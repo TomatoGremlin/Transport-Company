@@ -49,19 +49,19 @@ public class TransportCompanyController {
         return ResponseEntity.ok(filteredCompanies);
     }
 
-/*
+
     @GetMapping("/sortByRevenue")
     public ResponseEntity<List<TransportCompany>> sortByRevenue(){
         List<TransportCompany>sortedCompanies = companyService.sortByRevenue();
         return ResponseEntity.ok(sortedCompanies);
     }
 
-    @GetMapping("/filterByRevenue/{revenue}")
+    @GetMapping("/filterByRevenueGreaterThan/{revenue}")
     public ResponseEntity<List<TransportCompany>> filterByRevenue(@PathVariable BigDecimal revenue){
-        List<TransportCompany>filteredCompanies= companyService.filterByRevenueGreaterThan(revenue);
+        List<TransportCompany>filteredCompanies= companyService.findByRevenueGreaterThan(revenue);
         return ResponseEntity.ok(filteredCompanies);
     }
-*/
+
 
 }
 

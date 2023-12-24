@@ -80,7 +80,7 @@ public class EmployeeService {
         Vehicle vehicle = vehicleRepo.findById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with id: " + vehicleId));
 
-        if(!checkVehicleQualificationMatch(employee, vehicle)){
+        if(!doesVehicleQualificationMatch(employee, vehicle)){
             throw new RuntimeException("The Employee holds no qualification to drive the Vehicle.");
         }
         Set<Vehicle> updatedVehicles = addVehicleToSet(vehicle, employee);
@@ -89,7 +89,7 @@ public class EmployeeService {
     }
 
 
-    public boolean checkVehicleQualificationMatch (Employee employee, Vehicle vehicle){
+    public boolean doesVehicleQualificationMatch(Employee employee, Vehicle vehicle){
        Set<VehicleType> driverQualifications = employee.getQualifications();
        VehicleType vehicleType = vehicle.getVehicleType();
        return driverQualifications.contains(vehicleType);
@@ -107,36 +107,45 @@ public class EmployeeService {
     }
 
 
-
-    public List<Employee> sortedByQualification() {
-        return employeeRepo.sortedByQualification();
+    public List<Employee> findBySalaryGreaterThan(BigDecimal salary) {
+        return employeeRepo.filteredBySalaryGreaterThan(salary);
     }
-    public List<Employee>filteredByQualification(long qualificationId) {
+    public List<Employee> findByQualification(long qualificationId) {
         return employeeRepo.filteredByQualification(qualificationId);
     }
     public List<Employee> sortBySalary() {
         return employeeRepo.sortedBySalary();
     }
 
-    public List<Employee> filterBySalaryGreaterThan(BigDecimal salary) {
-        return employeeRepo.filteredBySalaryGreaterThan(salary);
+    public HashMap<VehicleType,List<Employee>> sortByQualification() {
+        List<VehicleType> orderedTypes = vehicleTypeRepo.sortAllByType();
+        HashMap<VehicleType,List<Employee>> employeesOrderedByQualification= new HashMap<>();
+        for (VehicleType type:orderedTypes) {
+            long id = type.getId();
+            List<Employee>employees = findByQualification(id);
+            employeesOrderedByQualification.put(type, employees);
+        }
+        return employeesOrderedByQualification;
     }
 
 
-    public HashMap<Employee, Long> reportNumberTransportationsPerEmployee(long companyId) {
+
+    public HashMap<Employee, Long> countTransportationsPerEmployee(long companyId) {
         TransportCompany company = companyService.findCompanyById(companyId);
         Set<Employee>employees = company.getEmployees();
         HashMap<Employee, Long> report= new HashMap<>();
         long numberOftransportations;
         for (Employee employee: employees) {
-            numberOftransportations= getEmployeeNumberTransportations(employee.getId());
+            numberOftransportations= countTransportations(employee.getId());
             report.put(employee, numberOftransportations);
         }
         return report;
     }
-    public long getEmployeeNumberTransportations(long employeeId) {
+    public long countTransportations(long employeeId) {
         Employee employee = findEmployeeById(employeeId);
         Set<Transportation> employeeTransportations = employee.getTransportations();
         return employeeTransportations.size();
     }
+
+
 }
