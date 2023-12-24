@@ -1,12 +1,16 @@
 package com.example.transportcompany.controller;
 
 import com.example.transportcompany.dto.TransportationDTO;
+import com.example.transportcompany.model.Employee;
 import com.example.transportcompany.model.Transportation;
 import com.example.transportcompany.service.TransportationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -78,11 +82,30 @@ public class TransportationController {
         return ResponseEntity.ok(info);
     }
 
-    @GetMapping("/number-of-transportations/")
-    public ResponseEntity<Long> reportNumberTransportations() {
-        long report = transportationService.reportNumberOfTransportations();
+    @GetMapping("/number-of-transportations/{companyId}")
+    public ResponseEntity<Long> getNumberTransportationsByCompany(@PathVariable long companyId) {
+        long report = transportationService.getCountByCompany(companyId);
         return ResponseEntity.ok(report);
     }
+
+    @GetMapping("/getRevenueByCompany/{companyId}")
+    public ResponseEntity<BigDecimal> getRevenue(@PathVariable long companyId){
+        BigDecimal transportationsRevenue = transportationService.getRevenueByCompany(companyId);
+        return ResponseEntity.ok(transportationsRevenue);
+    }
+
+    @GetMapping("/getRevenueOfEmployees/{companyId}")
+    public ResponseEntity<HashMap<Employee,BigDecimal>> getRevenueEmployees(@PathVariable long companyId){
+        HashMap<Employee,BigDecimal> revenues = transportationService.getRevenuePerEmployee(companyId);
+        return ResponseEntity.ok(revenues);
+    }
+
+    @GetMapping("/getRevenueByTimePeriod/{companyId}/{from}/to/{to}")
+    public ResponseEntity<BigDecimal> getRevenueByPeriod(@PathVariable long companyId, @PathVariable LocalDate from, @PathVariable LocalDate to){
+        BigDecimal revenue = transportationService.getRevenueByTimePeriod(companyId, from, to);
+        return ResponseEntity.ok(revenue);
+    }
+
 
 }
 

@@ -37,7 +37,7 @@ public class VehicleType {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "qualifications")
-    Set<Employee> employeeList;
+    Set<Employee> employees;
 
     @Override
     public String toString() {

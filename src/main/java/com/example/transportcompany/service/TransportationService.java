@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -75,7 +76,6 @@ public class TransportationService {
     public Transportation findTransportationById(long id) {
         return transportationRepo.findById(id).orElse(null);
     }
-
     public List<Transportation> findAllTransportation() {
         return transportationRepo.findAll();
     }
@@ -94,7 +94,7 @@ public class TransportationService {
             Load load = loadRepo.findById(loadId)
                     .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
             Set<Load>updatedLoads = addLoadToSet(load, transportation);
-            transportation.setLoadList(updatedLoads);
+            transportation.setLoads(updatedLoads);
             transportationRepo.save(transportation);
     }
 
@@ -104,19 +104,19 @@ public class TransportationService {
         Customer customer = customerRepo.findById(customerId)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
         Set<Customer>updatedCustomers = addCustomerToSet(customer, transportation);
-        transportation.setCustomerList(updatedCustomers);
+        transportation.setCustomers(updatedCustomers);
         transportationRepo.save(transportation);
     }
 
 
     public Set<Load> addLoadToSet(Load load, Transportation transportation){
-        Set<Load> currentLoads = transportation.getLoadList();
+        Set<Load> currentLoads = transportation.getLoads();
         currentLoads.add(load);
         return currentLoads;
     }
 
     public Set<Customer> addCustomerToSet(Customer customer, Transportation transportation){
-        Set<Customer> currentCustomers = transportation.getCustomerList();
+        Set<Customer> currentCustomers = transportation.getCustomers();
         currentCustomers.add(customer);
         return currentCustomers;
     }
@@ -127,7 +127,7 @@ public class TransportationService {
     }
 
     public List<Transportation> filterByDestination(String endPoint) {
-        return transportationRepo.filterByEndPoint(endPoint);
+        return transportationRepo.findByDestination(endPoint);
     }
 
 
@@ -143,14 +143,84 @@ public class TransportationService {
         return TransportationUtil.readTransportations(filePath);
     }
 
-    public long reportNumberOfTransportations() {
-        return transportationRepo.getNumberOfTransportations();
+    public long getCountByCompany(long companyId) {
+        return transportationRepo.getCountByCompanyId(companyId);
     }
 
-    /*
-    public BigDecimal reportTransportationRevenue(long transportationId) {
-        double totalLoadWeight = transportationRepo.getTotalWeightOfLoadsByTransportationId(transportationId);
-        return transportationRepo.getRevenueOfTransportation(transportationId, totalLoadWeight);
+
+    public BigDecimal sumTransportationRevenue(long transportationId) {
+        Transportation transportation = findTransportationById(transportationId);
+        TransportationRate companyRates =  transportation.getCompany().getTransportationRate();
+        BigDecimal numberCustomers = BigDecimal.valueOf( getNumberOfCustomers(transportation) );
+        BigDecimal totalLoadWeight = BigDecimal.valueOf(sumTotalLoadWeight(transportation));
+        BigDecimal loadRate = companyRates.getLoadRate();
+        BigDecimal customerRate = companyRates.getCustomerRate();
+        return customerRate.multiply(numberCustomers).add(loadRate.multiply(totalLoadWeight));
     }
-        */
-}
+
+    public double sumTotalLoadWeight(Transportation transportation){
+        Set<Load>loads = transportation.getLoads();
+        double totalWeight = 0.0;
+        for (Load load: loads) {
+            totalWeight+=load.getWeight();
+        }
+        return totalWeight;
+    }
+
+    public int getNumberOfCustomers(Transportation transportation){
+        Set<Customer>customers = transportation.getCustomers();
+        return customers.size();
+    }
+
+
+    public BigDecimal getRevenueByCompany(long companyId) {
+        List<Transportation> transportations = transportationRepo.findByCompanyId(companyId);
+        BigDecimal companyRevenue= BigDecimal.valueOf(0);
+        for (Transportation transportation: transportations) {
+            long id = transportation.getId();
+            BigDecimal transportationRevenue = sumTransportationRevenue(id);
+            companyRevenue = companyRevenue.add(transportationRevenue);
+        }
+        return companyRevenue;
+    }
+
+
+    public HashMap<Employee, BigDecimal> getRevenuePerEmployee(long companyId) {
+        List<Employee> employees = employeeRepo.findByCompanyId(companyId);
+        HashMap<Employee, BigDecimal> revenuePerEmployee = new HashMap<>();
+        for (Employee employee: employees) {
+            long id = employee.getId();
+            BigDecimal employeeRevenue = getRevenueOfEmployee(id);
+            revenuePerEmployee.put(employee, employeeRevenue);
+        }
+        return revenuePerEmployee;
+    }
+
+    public BigDecimal getRevenueOfEmployee(long employeeId) {
+        List<Transportation> transportations = transportationRepo.findByEmployeeId(employeeId);
+        BigDecimal employeeRevenue = BigDecimal.valueOf(0);
+        for (Transportation transportation: transportations) {
+            long id = transportation.getId();
+            BigDecimal transportationRevenue = sumTransportationRevenue(id);
+            employeeRevenue = employeeRevenue.add(transportationRevenue);
+        }
+        return employeeRevenue;
+    }
+
+
+    public BigDecimal getRevenueByTimePeriod(long companyId, LocalDate fromDate, LocalDate toDate ) {
+        List<Transportation> transportations = transportationRepo.findByPeriodAndCompany(companyId, fromDate, toDate);
+        BigDecimal revenue = BigDecimal.valueOf(0);
+        for (Transportation transportation: transportations) {
+            long id = transportation.getId();
+            BigDecimal transportationRevenue = sumTransportationRevenue(id);
+            revenue = revenue.add(transportationRevenue);
+        }
+        return revenue;
+    }
+
+    //public BigDecimal sumTotalRevenueByCompany(long companyId, LocalDate fromDate, LocalDate toDate ) {
+
+
+
+    }

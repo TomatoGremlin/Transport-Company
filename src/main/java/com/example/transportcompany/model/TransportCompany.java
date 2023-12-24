@@ -5,9 +5,8 @@ import jakarta.validation.constraints.*;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.util.List;
+
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -31,16 +30,16 @@ public class TransportCompany {
 
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
     @JsonIgnore
-    Set<Employee> employeeList;
+    Set<Employee> employees;
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    Set<Vehicle>vehicleList;
+    Set<Vehicle> vehicles;
 
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore
-    Set<Transportation>transportationList;
+    Set<Transportation> transportations;
 
     @OneToOne(mappedBy = "company")
     @JsonIgnore
@@ -51,9 +50,9 @@ public class TransportCompany {
         return "TransportCompany{" +
                 "id=" + id +
                 ", companyName='" + companyName + '\'' +
-                ", employeeList=" + employeeList +
-                ", vehicleList=" + vehicleList +
-                ", transportationList=" + transportationList +
+                ", employeeList=" + employees +
+                ", vehicleList=" + vehicles +
+                ", transportationList=" + transportations +
                 ", transportationRate=" + transportationRate.getId() +
                 '}';
     }

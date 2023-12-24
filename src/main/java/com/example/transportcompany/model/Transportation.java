@@ -8,9 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -62,7 +60,7 @@ public class Transportation {
             joinColumns = @JoinColumn(name = "transportation_id"),
             inverseJoinColumns = @JoinColumn(name = "customer_id")
     )
-    Set<Customer> customerList;
+    Set<Customer> customers;
 
 
     @ManyToMany
@@ -72,7 +70,7 @@ public class Transportation {
             inverseJoinColumns = @JoinColumn(name = "load_id")
 
     )
-    Set<Load>loadList;
+    Set<Load> loads;
 
     @Override
     public String toString() {

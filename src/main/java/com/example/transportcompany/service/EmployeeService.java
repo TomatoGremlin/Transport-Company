@@ -125,16 +125,16 @@ public class EmployeeService {
 
     public HashMap<Employee, Long> reportNumberTransportationsPerEmployee(long companyId) {
         TransportCompany company = companyService.findCompanyById(companyId);
-        Set<Employee>employees = company.getEmployeeList();
+        Set<Employee>employees = company.getEmployees();
         HashMap<Employee, Long> report= new HashMap<>();
         long numberOftransportations;
         for (Employee employee: employees) {
-            numberOftransportations= reportEmployeeNumberTransportations(employee.getId());
+            numberOftransportations= getEmployeeNumberTransportations(employee.getId());
             report.put(employee, numberOftransportations);
         }
         return report;
     }
-    public long reportEmployeeNumberTransportations(long employeeId) {
+    public long getEmployeeNumberTransportations(long employeeId) {
         Employee employee = findEmployeeById(employeeId);
         Set<Transportation> employeeTransportations = employee.getTransportations();
         return employeeTransportations.size();

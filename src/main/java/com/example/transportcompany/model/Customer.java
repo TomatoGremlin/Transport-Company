@@ -8,9 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -32,8 +30,8 @@ public class Customer {
     String customerName;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "customerList")
-    Set<Transportation> transportationList;
+    @ManyToMany(mappedBy = "customers")
+    Set<Transportation> transportations;
 
     @Override
     public String toString() {

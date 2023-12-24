@@ -3,13 +3,11 @@ package com.example.transportcompany.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import java.util.Set;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -26,15 +24,13 @@ public class Load {
 
     @NotNull(message = "Load weight name cannot be null")
     @Positive
-    //@Min(value = "1.0", inclusive = true, message = "Weight must be at least 1.0 kg")
-    //@Max
-    //@Digits(integer = 5, fraction = 2, message = "Maximum 5 digits with 2 decimal places allowed")
+    @DecimalMin(value = "1.0", inclusive = true, message = "Weight must be at least 1.0 kg")
     @Column(name = "weight", nullable = false)
     double weight;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "loadList")
-    Set<Transportation> transportationList;
+    @ManyToMany(mappedBy = "loads")
+    Set<Transportation> transportations;
 
     @Override
     public String toString() {

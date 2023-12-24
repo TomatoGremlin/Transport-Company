@@ -82,7 +82,7 @@ public class EmployeeController {
     }
     @GetMapping("/number-of-transportations/{employeeId}")
     public ResponseEntity<Long> reportEmployeeNumberTransportations(@PathVariable long employeeId) {
-        long report = employeeService.reportEmployeeNumberTransportations(employeeId);
+        long report = employeeService.getEmployeeNumberTransportations(employeeId);
         return ResponseEntity.ok(report);
     }
 
