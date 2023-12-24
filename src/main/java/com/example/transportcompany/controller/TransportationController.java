@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/transportation")
@@ -41,15 +42,15 @@ public class TransportationController {
         return ResponseEntity.ok("The Transportation has been deleted");
     }
 
-    @PutMapping("/{transportationId}/add-customer/{customerId}")
-    public ResponseEntity<String> addCustomer(@PathVariable long transportationId, @PathVariable long customerId){
-        transportationService.addCustomer(transportationId, customerId);
-        return ResponseEntity.ok("The Customer has been added to the Transportation");
+    @PutMapping("/{transportationId}/add-customers")
+    public ResponseEntity<String> addCustomers(@PathVariable long transportationId, @RequestBody Set<Long> customerIds){
+        transportationService.addCustomer(transportationId, customerIds);
+        return ResponseEntity.ok("The Customers have been added to the Transportation");
     }
-    @PutMapping("/{transportationId}/add-load/{loadId}")
-    public ResponseEntity<String> addLoad(@PathVariable long transportationId, @PathVariable long loadId){
-        transportationService.addLoad(transportationId, loadId);
-        return ResponseEntity.ok("The Load has been added to the Transportation");
+    @PutMapping("/{transportationId}/add-loads")
+    public ResponseEntity<String> addLoads(@PathVariable long transportationId, @RequestBody Set<Long> loadIds){
+        transportationService.addLoads(transportationId, loadIds);
+        return ResponseEntity.ok("The Loads have been added to the Transportation");
     }
 
     @PutMapping("/{transportationId}/assign-employee/{employeeId}")

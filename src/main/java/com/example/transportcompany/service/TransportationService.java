@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -88,37 +89,86 @@ public class TransportationService {
         transportation.setEmployee(employee);
         transportationRepo.save(transportation);
     }
-    public void addLoad(long transportationId, long loadId){
-            Transportation transportation = transportationRepo.findById(transportationId)
-                    .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-            Load load = loadRepo.findById(loadId)
-                    .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
-            Set<Load>updatedLoads = addLoadToSet(load, transportation);
-            transportation.setLoads(updatedLoads);
-            transportationRepo.save(transportation);
-    }
-
-    public void addCustomer(long transportationId, long customerId){
+    public void addLoads(long transportationId, Set<Long> loadIds){
         Transportation transportation = transportationRepo.findById(transportationId)
                 .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Customer customer = customerRepo.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
-        Set<Customer>updatedCustomers = addCustomerToSet(customer, transportation);
-        transportation.setCustomers(updatedCustomers);
+        Set<Load>loadsToSave = addLoadsToSet(loadIds);
+        transportation.setLoads(loadsToSave);
         transportationRepo.save(transportation);
     }
 
-
-    public Set<Load> addLoadToSet(Load load, Transportation transportation){
-        Set<Load> currentLoads = transportation.getLoads();
-        currentLoads.add(load);
-        return currentLoads;
+    public void editLoads(long transportationId, Long loadId) {
+        Transportation transportation = transportationRepo.findById(transportationId)
+                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        Load load = loadRepo.findById(loadId)
+                .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
+        Set<Load>updatedLoads = transportation.getLoads();
+        updatedLoads.add(load);
+        transportation.setLoads(updatedLoads);
+        transportationRepo.save(transportation);
+    }
+    public void deleteLoads(long transportationId, Set<Long> loadIds){
+        Transportation transportation = transportationRepo.findById(transportationId)
+                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        Set<Load>currentLoads = transportation.getLoads();
+        for (Long loadId:loadIds) {
+            Load load = loadRepo.findById(loadId)
+                    .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
+            if (!currentLoads.remove(load)){
+                throw new RuntimeException("The Transportation didn't include a load with id " + loadId);
+            }
+        }
     }
 
-    public Set<Customer> addCustomerToSet(Customer customer, Transportation transportation){
-        Set<Customer> currentCustomers = transportation.getCustomers();
-        currentCustomers.add(customer);
-        return currentCustomers;
+    public void addCustomer(long transportationId, Set<Long> customerIds){
+        Transportation transportation = transportationRepo.findById(transportationId)
+                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        Set<Customer>customersToSave = addCustomersToSet(customerIds);
+        transportation.setCustomers(customersToSave);
+        transportationRepo.save(transportation);
+    }
+    public void editCustomers(long transportationId, Long customerId) {
+        Transportation transportation = transportationRepo.findById(transportationId)
+                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        Customer customer = customerRepo.findById(customerId)
+                .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + customerId));
+        Set<Customer>updatedCustomers = transportation.getCustomers();
+        updatedCustomers.add(customer);
+        transportation.setCustomers(updatedCustomers);
+        transportationRepo.save(transportation);
+    }
+    public void deleteCustomers(long transportationId, Set<Long> customerIds){
+        Transportation transportation = transportationRepo.findById(transportationId)
+                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        Set<Customer>currentCustomers = transportation.getCustomers();
+        for (Long customerId:customerIds) {
+            Customer customer = customerRepo.findById(customerId)
+                    .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
+            if (!currentCustomers.remove(customer)){
+                throw new RuntimeException("The Transportation didn't include a load with id " + customerId);
+            }
+        }
+    }
+
+
+    public Set<Load> addLoadsToSet( Set<Long>loadIds ){
+        Set<Load>loads = new HashSet<>();
+        for (Long loadId:loadIds) {
+            Load load = loadRepo.findById(loadId)
+                    .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
+            loads.add(load);
+        }
+        return loads;
+    }
+
+    public Set<Customer> addCustomersToSet(Set<Long> customerIds){
+        Set<Customer>customers = new HashSet<>();
+        for (Long customerId:customerIds) {
+            Customer customer = customerRepo.findById(customerId)
+                    .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
+            customers.add(customer);
+        }
+        return customers;
     }
 
 
@@ -219,6 +269,7 @@ public class TransportationService {
         return revenue;
     }
 
+    // TODO make this method:
     //public BigDecimal sumTotalRevenueByCompany(long companyId, LocalDate fromDate, LocalDate toDate ) {
 
 
