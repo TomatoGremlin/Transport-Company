@@ -2,40 +2,35 @@ package com.example.transportcompany.service;
 
 import com.example.transportcompany.dto.TransportationDTO;
 import com.example.transportcompany.model.*;
-import com.example.transportcompany.repository.CustomerRepository;
-import com.example.transportcompany.repository.EmployeeRepository;
-import com.example.transportcompany.repository.LoadRepository;
-import com.example.transportcompany.repository.TransportationRepository;
-import com.example.transportcompany.util.TransportationUtil;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.transportcompany.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TransportationService {
     private final TransportationRepository transportationRepo;
-    private final LoadRepository loadRepo;
-    private final EmployeeRepository employeeRepo;
-    private final CustomerRepository customerRepo;
-    private final TransportCompanyService companyService;
+    private final LoadService loadService;
+    private final EmployeeService employeeService;
+    private final CustomerService customerService;
+    private final TransportCompanyService transportCompanyService;
     @Autowired
     public TransportationService(TransportationRepository transportationRepo,
-                                 LoadRepository loadRepo,
-                                 EmployeeRepository employeeRepo,
-                                 CustomerRepository customerRepo,
-                                 TransportCompanyService companyService) {
+                                 LoadService loadService,
+                                 EmployeeService employeeService,
+                                 CustomerService customerService,
+                                 TransportCompanyService transportCompanyService) {
         this.transportationRepo = transportationRepo;
-        this.loadRepo = loadRepo;
-        this.employeeRepo = employeeRepo;
-        this.customerRepo = customerRepo;
-        this.companyService = companyService;
+        this.loadService = loadService;
+        this.employeeService = employeeService;
+        this.customerService = customerService;
+        this.transportCompanyService = transportCompanyService;
     }
 
 
@@ -48,13 +43,13 @@ public class TransportationService {
         transportationToSave.setPaymentStatus(transportationDTO.isPaymentStatus());
 
         long companyId = transportationDTO.getCompanyId();
-        TransportCompany transportCompany = companyService.findCompanyById(companyId);
+        TransportCompany transportCompany = transportCompanyService.findCompanyById(companyId);
         transportationToSave.setCompany(transportCompany);
         transportationRepo.save(transportationToSave);
     }
     public void updateTransportationById(long transportationId, TransportationDTO updatedTransportation) {
-        Transportation transportationToUpdate = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        Transportation transportationToUpdate = findTransportationById(transportationId);
+               // .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
 
         String newStartPoint = updatedTransportation.getStartPoint();
         String newEndPoint = updatedTransportation.getEndPoint();
@@ -62,7 +57,8 @@ public class TransportationService {
         LocalDate newArrivalDate =  updatedTransportation.getArrivalDate();
         boolean newPaymentStatus = updatedTransportation.isPaymentStatus();
 
-        TransportCompany newCompany = companyService.findCompanyById(updatedTransportation.getCompanyId());
+        TransportCompany newCompany = transportCompanyService.findCompanyById(updatedTransportation.getCompanyId());
+
         transportationToUpdate.setDepartureDate(newDepartureDate);
         transportationToUpdate.setArrivalDate(newArrivalDate);
         transportationToUpdate.setStartPoint(newStartPoint);
@@ -77,102 +73,79 @@ public class TransportationService {
     public Transportation findTransportationById(long id) {
         return transportationRepo.findById(id).orElse(null);
     }
-    public List<Transportation> findAllTransportation() {
+    public List<Transportation> findAllTransportations() {
         return transportationRepo.findAll();
     }
 
+    public List<Transportation> findByCompany(long companyId){
+        return transportationRepo.findByCompanyId(companyId);
+    }
+
+    public List<Transportation> findByEmployee(long employeeId){
+        return transportationRepo.findByEmployeeId(employeeId);
+    }
+
+    public List<Transportation> findByPeriodAndCompany(long companyId, LocalDate fromDate, LocalDate toDate){
+        return transportationRepo.findByPeriodAndCompany(companyId, fromDate, toDate);
+    }
+
     public void assignEmployee(long transportationId, long employeeId){
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
+        Transportation transportation = findTransportationById(transportationId);
+        Employee employee = employeeService.findEmployeeById(employeeId);
         transportation.setEmployee(employee);
         transportationRepo.save(transportation);
     }
-    public void addLoads(long transportationId, Set<Long> loadIds){
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Set<Load>loadsToSave = addLoadsToSet(loadIds);
+    public void editLoads(long transportationId, Set<Long> loadIds){
+        Transportation transportation = findTransportationById(transportationId);
+        Set<Load>loadsToSave = loadService.addLoadsToSet(loadIds);
         transportation.setLoads(loadsToSave);
         transportationRepo.save(transportation);
     }
 
-    public void editLoads(long transportationId, Long loadId) {
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Load load = loadRepo.findById(loadId)
-                .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
+    public void addLoad(long transportationId, Long loadId) {
+        Transportation transportation = findTransportationById(transportationId);
+        Load load = loadService.findLoadById(loadId);
         Set<Load>updatedLoads = transportation.getLoads();
         updatedLoads.add(load);
         transportation.setLoads(updatedLoads);
         transportationRepo.save(transportation);
     }
     public void deleteLoads(long transportationId, Set<Long> loadIds){
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Set<Load>currentLoads = transportation.getLoads();
-        for (Long loadId:loadIds) {
-            Load load = loadRepo.findById(loadId)
-                    .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
-            if (!currentLoads.remove(load)){
-                throw new RuntimeException("The Transportation didn't include a load with id " + loadId);
-            }
+        Transportation transportation = findTransportationById(transportationId);
+        Set<Load> loadsToDelete = loadService.addLoadsToSet(loadIds);
+        Set<Load> currentLoads = transportation.getLoads();
+        if (!currentLoads.removeAll(loadsToDelete)) {
+            throw new RuntimeException("The Transportation didn't include one or more specified loads");
         }
     }
 
-    public void addCustomer(long transportationId, Set<Long> customerIds){
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Set<Customer>customersToSave = addCustomersToSet(customerIds);
+    public void editCustomers(long transportationId, Set<Long> customerIds){
+        Transportation transportation = findTransportationById(transportationId);
+        Set<Customer>customersToSave = customerService.addCustomersToSet(customerIds);
         transportation.setCustomers(customersToSave);
         transportationRepo.save(transportation);
     }
-    public void editCustomers(long transportationId, Long customerId) {
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Customer customer = customerRepo.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + customerId));
+    public void addCustomer(long transportationId, Long customerId) {
+        Transportation transportation = findTransportationById(transportationId);
+        Customer customer = customerService.findCustomerById(customerId);
         Set<Customer>updatedCustomers = transportation.getCustomers();
         updatedCustomers.add(customer);
         transportation.setCustomers(updatedCustomers);
         transportationRepo.save(transportation);
     }
     public void deleteCustomers(long transportationId, Set<Long> customerIds){
-        Transportation transportation = transportationRepo.findById(transportationId)
-                .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
-        Set<Customer>currentCustomers = transportation.getCustomers();
-        for (Long customerId:customerIds) {
-            Customer customer = customerRepo.findById(customerId)
-                    .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
-            if (!currentCustomers.remove(customer)){
-                throw new RuntimeException("The Transportation didn't include a load with id " + customerId);
-            }
+        Transportation transportation = findTransportationById(transportationId);
+        Set<Customer> customersToDelete = customerService.addCustomersToSet(customerIds);
+        Set<Customer> currentCustomers = transportation.getCustomers();
+        if (!currentCustomers.removeAll(customersToDelete)) {
+            throw new RuntimeException("The Transportation didn't include one or more specified customers");
         }
     }
 
-
-    public Set<Load> addLoadsToSet( Set<Long>loadIds ){
-        Set<Load>loads = new HashSet<>();
-        for (Long loadId:loadIds) {
-            Load load = loadRepo.findById(loadId)
-                    .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
-            loads.add(load);
-        }
-        return loads;
+    public List<Transportation> sortByStartPoint() {
+        return transportationRepo.sortByStartPoint();
     }
-
-    public Set<Customer> addCustomersToSet(Set<Long> customerIds){
-        Set<Customer>customers = new HashSet<>();
-        for (Long customerId:customerIds) {
-            Customer customer = customerRepo.findById(customerId)
-                    .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
-            customers.add(customer);
-        }
-        return customers;
-    }
-
-
-    public List<Transportation> sortByDestination() {
+    public List<Transportation> sortByEndPoint() {
         return transportationRepo.sortByEndPoint();
     }
 
@@ -180,25 +153,11 @@ public class TransportationService {
         return transportationRepo.findByDestination(endPoint);
     }
 
-
-    public void writeToFile(String fileName) {
-        String filePath = "FILES/" + fileName;
-        List<Transportation>transportations = findAllTransportation();
-        TransportationUtil.writeTransportations(filePath, transportations);
-    }
-
-    public String readFromFile(String fileName) {
-        //exception handling if file doesnt exist
-        String filePath = "FILES/" + fileName;
-        return TransportationUtil.readTransportations(filePath);
-    }
-
     public long getCountByCompany(long companyId) {
         return transportationRepo.getCountByCompanyId(companyId);
     }
 
-
-    public BigDecimal sumTransportationRevenue(long transportationId) {
+   /* public BigDecimal sumTransportationRevenue(long transportationId) {
         Transportation transportation = findTransportationById(transportationId);
         TransportationRate companyRates =  transportation.getCompany().getTransportationRate();
         BigDecimal numberCustomers = BigDecimal.valueOf( getNumberOfCustomers(transportation) );
@@ -209,12 +168,10 @@ public class TransportationService {
     }
 
     public double sumTotalLoadWeight(Transportation transportation){
-        Set<Load>loads = transportation.getLoads();
-        double totalWeight = 0.0;
-        for (Load load: loads) {
-            totalWeight+=load.getWeight();
-        }
-        return totalWeight;
+        Set<Load> loads = transportation.getLoads();
+        return loads.stream()
+                .mapToDouble(Load::getWeight)
+                .sum();
     }
 
     public int getNumberOfCustomers(Transportation transportation){
@@ -225,53 +182,38 @@ public class TransportationService {
 
     public BigDecimal getRevenueByCompany(long companyId) {
         List<Transportation> transportations = transportationRepo.findByCompanyId(companyId);
-        BigDecimal companyRevenue= BigDecimal.valueOf(0);
-        for (Transportation transportation: transportations) {
-            long id = transportation.getId();
-            BigDecimal transportationRevenue = sumTransportationRevenue(id);
-            companyRevenue = companyRevenue.add(transportationRevenue);
-        }
-        return companyRevenue;
+        return transportations.stream()
+                .map(Transportation::getId)
+                .map(this::sumTransportationRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-
-    public HashMap<Employee, BigDecimal> getRevenuePerEmployee(long companyId) {
-        List<Employee> employees = employeeRepo.findByCompanyId(companyId);
-        HashMap<Employee, BigDecimal> revenuePerEmployee = new HashMap<>();
-        for (Employee employee: employees) {
-            long id = employee.getId();
-            BigDecimal employeeRevenue = getRevenueOfEmployee(id);
-            revenuePerEmployee.put(employee, employeeRevenue);
-        }
-        return revenuePerEmployee;
-    }
 
     public BigDecimal getRevenueOfEmployee(long employeeId) {
         List<Transportation> transportations = transportationRepo.findByEmployeeId(employeeId);
-        BigDecimal employeeRevenue = BigDecimal.valueOf(0);
-        for (Transportation transportation: transportations) {
-            long id = transportation.getId();
-            BigDecimal transportationRevenue = sumTransportationRevenue(id);
-            employeeRevenue = employeeRevenue.add(transportationRevenue);
-        }
-        return employeeRevenue;
+        return transportations.stream()
+                .map(Transportation::getId)
+                .map(this::sumTransportationRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
+    public HashMap<Employee, BigDecimal> getRevenueOfEachEmployee(long companyId) {
+        List<Employee> employees = employeeService.findByCompany(companyId);
+        return employees.stream()
+                .collect(Collectors.toMap(
+                        employee -> employee,
+                        employee -> getRevenueOfEmployee(employee.getId()),
+                        (oldValue, newValue) -> newValue,
+                        HashMap::new
+                ));
+    }
 
     public BigDecimal getRevenueByTimePeriod(long companyId, LocalDate fromDate, LocalDate toDate ) {
         List<Transportation> transportations = transportationRepo.findByPeriodAndCompany(companyId, fromDate, toDate);
-        BigDecimal revenue = BigDecimal.valueOf(0);
-        for (Transportation transportation: transportations) {
-            long id = transportation.getId();
-            BigDecimal transportationRevenue = sumTransportationRevenue(id);
-            revenue = revenue.add(transportationRevenue);
-        }
-        return revenue;
-    }
-
-    // TODO make this method:
-    //public BigDecimal sumTotalRevenueByCompany(long companyId, LocalDate fromDate, LocalDate toDate ) {
+        return transportations.stream()
+                .map(Transportation::getId)
+                .map(this::sumTransportationRevenue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }*/
 
 
-
-    }
+}

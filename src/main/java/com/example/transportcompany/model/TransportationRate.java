@@ -16,6 +16,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "transportation_rate")
 @Entity
@@ -25,25 +26,25 @@ public class TransportationRate {
     @Column(name = "rate_id")
     long id;
 
-
     // price per person
-    @NotNull(message = "Customer rate cannot be null")
+    @NotNull(message = "Customer Rate cannot be null")
     @Positive
-    @Digits(integer = 10, fraction = 2, message = "Maximum 10 digits with 2 decimal places allowed")
-    @DecimalMin(value = "1.0", inclusive = true, message = "Customer rate must be greater than or equal to 1.0 lv")
+    @Digits(integer = 2, fraction = 2, message = "Maximum 2 digits with 2 decimal places allowed")
+    @DecimalMin(value = "1.0", inclusive = true, message = "Customer Rate must be greater than or equal to 1.0 lv")
     @Column(name ="customer_rate", nullable = false)
     BigDecimal customerRate;
 
     // price per kilogram
-    @NotNull(message = "Load rate cannot be null")
+    @NotNull(message = "Load Rate cannot be null")
     @Positive
-    @Digits(integer = 10, fraction = 2, message = "Maximum 10 digits with 2 decimal places allowed")
-    @DecimalMin(value = "1.0", inclusive = true, message = "Load rate must be greater than or equal to 1.0 lv")
+    @Digits(integer = 2, fraction = 2, message = "Maximum 2 digits with 2 decimal places allowed")
+    @DecimalMin(value = "1.0", inclusive = true, message = "Load Rate must be greater than or equal to 1.0 lv")
     @Column(name ="load_rate", nullable = false)
     BigDecimal loadRate;
 
+    @NotNull(message = "Company cannot be null")
     @OneToOne
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", nullable = false)
     TransportCompany company;
 
     @Override

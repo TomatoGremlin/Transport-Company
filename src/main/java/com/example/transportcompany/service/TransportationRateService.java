@@ -33,9 +33,7 @@ public class TransportationRateService {
         transportationRateRepo.save(transportationRateToSave);
     }
     public void updateTransportationRateById(long transportationRateId, TransportationRateDTO updatedTransportationRate) {
-        TransportationRate transportationRateToUpdate = transportationRateRepo.findById(transportationRateId)
-                .orElseThrow(() -> new EntityNotFoundException("TransportationRate not found with id: " + transportationRateId));
-
+        TransportationRate transportationRateToUpdate = findTransportationRateById(transportationRateId);
         BigDecimal newCustomerRate = updatedTransportationRate.getCustomerRate();
         BigDecimal newLoadRate = updatedTransportationRate.getLoadRate();
         TransportCompany newCompany = companyService.findCompanyById(updatedTransportationRate.getCompanyId());
@@ -55,6 +53,5 @@ public class TransportationRateService {
     public List<TransportationRate> findAllTransportationRate() {
         return transportationRateRepo.findAll();
     }
-
 
 }

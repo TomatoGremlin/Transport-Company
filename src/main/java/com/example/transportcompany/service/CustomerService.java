@@ -3,11 +3,12 @@ package com.example.transportcompany.service;
 import com.example.transportcompany.dto.CustomerDTO;
 import com.example.transportcompany.model.Customer;
 import com.example.transportcompany.repository.CustomerRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -19,15 +20,13 @@ public class CustomerService {
 
     public void saveCustomer(CustomerDTO customerDTO) {
         Customer customerToSave = new Customer();
-        customerToSave.setCustomerName(customerDTO.getName());
+        customerToSave.setName(customerDTO.getName());
         customerRepo.save(customerToSave);
     }
     public void updateCustomerById(long customerId, CustomerDTO updatedCustomer) {
-        Customer customerToUpdate = customerRepo.findById(customerId)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id: " + customerId));
-
+        Customer customerToUpdate = findCustomerById(customerId);
         String newName = updatedCustomer.getName();
-        customerToUpdate.setCustomerName(newName);
+        customerToUpdate.setName(newName);
         customerRepo.save(customerToUpdate);
     }
     public void deleteCustomerById(long id) {
@@ -40,6 +39,10 @@ public class CustomerService {
     public List<Customer> findAllCustomer() {
         return customerRepo.findAll();
     }
-
+    public Set<Customer> addCustomersToSet(Set<Long> customerIds){
+        return customerIds.stream()
+                .map(customerId -> findCustomerById(customerId))
+                .collect(Collectors.toSet());
+    }
 
 }

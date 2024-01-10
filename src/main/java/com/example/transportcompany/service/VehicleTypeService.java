@@ -42,5 +42,7 @@ public class VehicleTypeService {
         return vehicleTypeRepo.findAll();
     }
 
-
+    public List<VehicleType>orderByType(){
+        return vehicleTypeRepo.sortByType();
+    }
 }

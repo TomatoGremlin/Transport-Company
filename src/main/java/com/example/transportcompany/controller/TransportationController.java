@@ -1,16 +1,13 @@
 package com.example.transportcompany.controller;
 
 import com.example.transportcompany.dto.TransportationDTO;
-import com.example.transportcompany.model.Employee;
 import com.example.transportcompany.model.Transportation;
 import com.example.transportcompany.service.TransportationService;
+import com.example.transportcompany.util.TransportationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +17,7 @@ public class TransportationController {
     private final TransportationService transportationService;
 
     @Autowired
-    public TransportationController(TransportationService transportationService ) {
+    public TransportationController(TransportationService transportationService  ) {
         this.transportationService = transportationService;
     }
 
@@ -42,28 +39,58 @@ public class TransportationController {
         return ResponseEntity.ok("The Transportation has been deleted");
     }
 
-    @PutMapping("/{transportationId}/add-customers")
-    public ResponseEntity<String> addCustomers(@PathVariable long transportationId, @RequestBody Set<Long> customerIds){
-        transportationService.addCustomer(transportationId, customerIds);
+    @PutMapping("/{transportationId}/edit/customers")
+    public ResponseEntity<String> editCustomers(@PathVariable long transportationId, @RequestBody Set<Long> customerIds){
+        transportationService.editCustomers(transportationId, customerIds);
         return ResponseEntity.ok("The Customers have been added to the Transportation");
     }
-    @PutMapping("/{transportationId}/add-loads")
-    public ResponseEntity<String> addLoads(@PathVariable long transportationId, @RequestBody Set<Long> loadIds){
-        transportationService.addLoads(transportationId, loadIds);
+    @PutMapping("/{transportationId}/add/customer/{customerId}")
+    public ResponseEntity<String> addCustomer(@PathVariable long transportationId, @PathVariable long customerId){
+        transportationService.addCustomer(transportationId, customerId);
+        return ResponseEntity.ok("The Customer has been added to the Transportation");
+    }
+    @DeleteMapping("/{transportationId}/delete/customers")
+    public ResponseEntity<String> deleteCustomers(@PathVariable long transportationId, @RequestBody Set<Long> customerIds){
+        transportationService.deleteCustomers(transportationId, customerIds);
+        return ResponseEntity.ok("The Customers have been delete from the Transportation");
+    }
+    @PutMapping("/{transportationId}/edit/loads")
+    public ResponseEntity<String> editLoads(@PathVariable long transportationId, @RequestBody Set<Long> loadIds){
+        transportationService.editLoads(transportationId, loadIds);
         return ResponseEntity.ok("The Loads have been added to the Transportation");
     }
+
+    @PutMapping("/{transportationId}/add/load/{loadId}")
+    public ResponseEntity<String> addLoad(@PathVariable long transportationId, @PathVariable long loadId){
+        transportationService.addLoad(transportationId, loadId);
+        return ResponseEntity.ok("The Load has been added to the Transportation");
+    }
+
+    @DeleteMapping("/{transportationId}/delete/loads")
+    public ResponseEntity<String> deleteLoads(@PathVariable long transportationId, @RequestBody Set<Long> loadIds){
+        transportationService.deleteLoads(transportationId, loadIds);
+        return ResponseEntity.ok("The Loads have been deleted from the Transportation");
+    }
+
+
 
     @PutMapping("/{transportationId}/assign-employee/{employeeId}")
     public ResponseEntity<String> assignEmployee(@PathVariable long transportationId, @PathVariable long employeeId){
         transportationService.assignEmployee(transportationId, employeeId);
         return ResponseEntity.ok("The Employee has been assigned to the Transportation");
     }
-
-    @GetMapping("/sortByDestination")
-    public ResponseEntity<List<Transportation>> sortByDestination(){
-        List<Transportation>sortedDestinations = transportationService.sortByDestination();
+    @GetMapping("/sort/startPoint")
+    public ResponseEntity<List<Transportation>> sortByStartPoint(){
+        List<Transportation>sortedDestinations = transportationService.sortByStartPoint();
         return ResponseEntity.ok(sortedDestinations);
     }
+
+    @GetMapping("/sort/endPoint")
+    public ResponseEntity<List<Transportation>> sortByEndPoint(){
+        List<Transportation>sortedDestinations = transportationService.sortByEndPoint();
+        return ResponseEntity.ok(sortedDestinations);
+    }
+
 
     @GetMapping("/filterByDestination/{destination}")
     public ResponseEntity<List<Transportation>> filterByDestination(@PathVariable String destination){
@@ -72,14 +99,17 @@ public class TransportationController {
     }
 
     @PostMapping("/writeToFile/{fileName}")
-    public ResponseEntity<String> writeTransportationInfoToFile(@PathVariable String fileName) {
-        transportationService.writeToFile(fileName);
+    public ResponseEntity<String> writeToFile(@PathVariable String fileName) {
+        String filePath = "FILES/" + fileName;
+        List<Transportation>transportations = transportationService.findAllTransportations();
+        TransportationUtil.writeTransportations(filePath, transportations);
         return ResponseEntity.ok("Transportations have been written to file");
 
     }
     @GetMapping("/retrieveFromFile/{fileName}")
-    public ResponseEntity<String> getAllTransportationInfoFromFile(@PathVariable String fileName) {
-        String info = transportationService.readFromFile(fileName);
+    public ResponseEntity<String> readFromFile(@PathVariable String fileName) {
+        String filePath = "FILES/" + fileName;
+        String info = TransportationUtil.readTransportations(filePath);
         return ResponseEntity.ok(info);
     }
 
@@ -88,25 +118,6 @@ public class TransportationController {
         long report = transportationService.getCountByCompany(companyId);
         return ResponseEntity.ok(report);
     }
-
-    @GetMapping("/getRevenueByCompany/{companyId}")
-    public ResponseEntity<BigDecimal> getRevenue(@PathVariable long companyId){
-        BigDecimal transportationsRevenue = transportationService.getRevenueByCompany(companyId);
-        return ResponseEntity.ok(transportationsRevenue);
-    }
-
-    @GetMapping("/getRevenueOfEmployees/{companyId}")
-    public ResponseEntity<HashMap<Employee,BigDecimal>> getRevenueEmployees(@PathVariable long companyId){
-        HashMap<Employee,BigDecimal> revenues = transportationService.getRevenuePerEmployee(companyId);
-        return ResponseEntity.ok(revenues);
-    }
-
-    @GetMapping("/getRevenueByTimePeriod/{companyId}/{from}/to/{to}")
-    public ResponseEntity<BigDecimal> getRevenueByPeriod(@PathVariable long companyId, @PathVariable LocalDate from, @PathVariable LocalDate to){
-        BigDecimal revenue = transportationService.getRevenueByTimePeriod(companyId, from, to);
-        return ResponseEntity.ok(revenue);
-    }
-
 
 }
 

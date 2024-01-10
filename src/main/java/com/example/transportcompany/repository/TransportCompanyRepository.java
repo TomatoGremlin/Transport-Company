@@ -10,9 +10,8 @@ import java.util.List;
 @Repository
 public interface TransportCompanyRepository extends JpaRepository<TransportCompany, Long> {
    @Query("SELECT c FROM TransportCompany c ORDER BY c.companyName")
-   List<TransportCompany> sortAllByName();
+   List<TransportCompany> sortByName();
    @Query("SELECT c FROM TransportCompany c WHERE LOWER(c.companyName) LIKE %:name% ORDER BY c.companyName ASC")
    List<TransportCompany> findByName(String name);
-
 
 }

@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "transport_company")
 @Entity
@@ -23,7 +24,7 @@ public class TransportCompany {
 
     @NotNull(message = "Company name cannot be null")
     @NotBlank(message = "Company name cannot be left blank")
-    @Size(max = 30, message = "Company name has to be with up to 30 characters")
+    @Size(max = 20, message = "Company name has to be with up to 20 characters")
     @Pattern(regexp = "^([A-Z]).*", message = "Company names begin with capital letters")
     @Column(name = "company_name", nullable = false)
     String companyName;
@@ -35,7 +36,6 @@ public class TransportCompany {
     @OneToMany(mappedBy = "company")
     @JsonIgnore
     Set<Vehicle> vehicles;
-
 
     @OneToMany(mappedBy = "company")
     @JsonIgnore

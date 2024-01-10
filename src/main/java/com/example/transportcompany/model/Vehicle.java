@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "vehicle")
 @Entity
@@ -21,18 +22,19 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     long id;
 
-    @JsonIgnore
-    @ManyToOne()
-    @JoinColumn(name = "company_id", nullable = false) // This is the foreign key column
-    TransportCompany company;
-
-    @NotNull
+    @NotNull(message = "Vehicle Type cannot be null")
     @ManyToOne()
     @JoinColumn(name= "vehicle_type_id", nullable = false)
     VehicleType vehicleType;
 
+    @NotNull(message = "Company cannot be null")
+    @ManyToOne()
+    @JoinColumn(name = "company_id", nullable = false) // This is the foreign key column
     @JsonIgnore
+    TransportCompany company;
+
     @ManyToMany(mappedBy = "vehicles")
+    @JsonIgnore
     Set<Employee> employees;
 
     @Override

@@ -3,9 +3,6 @@ package com.example.transportcompany.service;
 import com.example.transportcompany.dto.EmployeeDTO;
 import com.example.transportcompany.model.*;
 import com.example.transportcompany.repository.EmployeeRepository;
-import com.example.transportcompany.repository.VehicleRepository;
-import com.example.transportcompany.repository.VehicleTypeRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,40 +10,42 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
     private final EmployeeRepository employeeRepo;
-    private final TransportCompanyService companyService;
-    private final VehicleRepository vehicleRepo;
-    private final VehicleTypeRepository vehicleTypeRepo;
+    private final TransportCompanyService transportCompanyService;
+    private final VehicleService vehicleService;
+    private final VehicleTypeService vehicleTypeService;
     @Autowired
     public EmployeeService(EmployeeRepository employeeRepo,
-                           TransportCompanyService companyService,
-                           VehicleRepository vehicleRepo,
-                           VehicleTypeRepository vehicleTypeRepo) {
+                           TransportCompanyService transportCompanyService,
+                           VehicleService vehicleService,
+                           VehicleTypeService vehicleTypeService) {
         this.employeeRepo = employeeRepo;
-        this.companyService = companyService;
-        this.vehicleRepo = vehicleRepo;
-        this.vehicleTypeRepo = vehicleTypeRepo;
+        this.transportCompanyService = transportCompanyService;
+        this.vehicleService = vehicleService;
+        this.vehicleTypeService = vehicleTypeService;
     }
 
     public void saveEmployee(EmployeeDTO employeeDTO) {
         Employee employeeToSave = new Employee();
         employeeToSave.setName(employeeDTO.getName());
-        long companyId = employeeDTO.getCompanyId();
-        TransportCompany transportCompany = companyService.findCompanyById(companyId);
-        employeeToSave.setCompany(transportCompany);
         employeeToSave.setSalary(employeeDTO.getSalary());
+        long companyId = employeeDTO.getCompanyId();
+        TransportCompany transportCompany = transportCompanyService.findCompanyById(companyId);
+        employeeToSave.setCompany(transportCompany);
         employeeRepo.save(employeeToSave);
     }
     public void updateEmployeeById(long employeeId, EmployeeDTO updatedEmployee) {
-        Employee employeeToUpdate = employeeRepo.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
+        Employee employeeToUpdate = findEmployeeById(employeeId);
 
         String newName = updatedEmployee.getName();
         BigDecimal newSalary = updatedEmployee.getSalary();
-        TransportCompany newCompany = companyService.findCompanyById(updatedEmployee.getCompanyId());
+        long newCompanyId = updatedEmployee.getCompanyId();
+        TransportCompany newCompany = transportCompanyService.findCompanyById(newCompanyId);
+
         employeeToUpdate.setName(newName);
         employeeToUpdate.setSalary(newSalary);
         employeeToUpdate.setCompany(newCompany);
@@ -55,30 +54,18 @@ public class EmployeeService {
     public void deleteEmployeeById(long id) {
         employeeRepo.deleteById(id);
     }
-    public Employee findEmployeeById(long id) {
-        return employeeRepo.findById(id).orElse(null);
-    }
-
-    public List<Employee> findAllEmployee() {
-        return employeeRepo.findAll();
-    }
-
 
     public void addQualification(long employeeId, long vehicleTypeId) {
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
-        VehicleType vehicleType = vehicleTypeRepo.findById(vehicleTypeId)
-                .orElseThrow(() -> new EntityNotFoundException("VehicleType not found with id: " + vehicleTypeId));
+        Employee employee = findEmployeeById(employeeId);
+        VehicleType vehicleType = vehicleTypeService.findVehicleTypeById(vehicleTypeId);
         Set<VehicleType> updatesQualifications = addVehicleTypeToSet(vehicleType, employee);
         employee.setQualifications(updatesQualifications);
         employeeRepo.save(employee);
     }
 
     public void assignVehicle(long employeeId, long vehicleId) {
-        Employee employee = employeeRepo.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
-        Vehicle vehicle = vehicleRepo.findById(vehicleId)
-                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with id: " + vehicleId));
+        Employee employee = findEmployeeById(employeeId);
+        Vehicle vehicle = vehicleService.findVehicleById(vehicleId);
 
         if(!doesVehicleQualificationMatch(employee, vehicle)){
             throw new RuntimeException("The Employee holds no qualification to drive the Vehicle.");
@@ -100,12 +87,23 @@ public class EmployeeService {
         currentVehicles.add(vehicle);
         return currentVehicles;
     }
+
     public Set<VehicleType> addVehicleTypeToSet(VehicleType vehicleType, Employee employee){
         Set<VehicleType> currentQualifications = employee.getQualifications();
         currentQualifications.add(vehicleType);
         return currentQualifications;
     }
+    public Employee findEmployeeById(long id) {
+        return employeeRepo.findById(id).orElse(null);
+    }
 
+    public List<Employee> findAllEmployee() {
+        return employeeRepo.findAll();
+    }
+
+    public List<Employee>findByCompany(long companyId){
+        return employeeRepo.findByCompanyId(companyId);
+    }
 
     public List<Employee> findBySalaryGreaterThan(BigDecimal salary) {
         return employeeRepo.filteredBySalaryGreaterThan(salary);
@@ -118,28 +116,27 @@ public class EmployeeService {
     }
 
     public HashMap<VehicleType,List<Employee>> sortByQualification() {
-        List<VehicleType> orderedTypes = vehicleTypeRepo.sortAllByType();
-        HashMap<VehicleType,List<Employee>> employeesOrderedByQualification= new HashMap<>();
-        for (VehicleType type:orderedTypes) {
-            long id = type.getId();
-            List<Employee>employees = findByQualification(id);
-            employeesOrderedByQualification.put(type, employees);
-        }
-        return employeesOrderedByQualification;
+        List<VehicleType> orderedTypes = vehicleTypeService.orderByType();
+        return orderedTypes.stream()
+                .collect(Collectors.toMap(
+                        type -> type,
+                        type -> findByQualification(type.getId()),
+                        (existing, replacement) -> existing,
+                        HashMap::new
+                ));
     }
 
 
-
     public HashMap<Employee, Long> countTransportationsPerEmployee(long companyId) {
-        TransportCompany company = companyService.findCompanyById(companyId);
-        Set<Employee>employees = company.getEmployees();
-        HashMap<Employee, Long> report= new HashMap<>();
-        long numberOftransportations;
-        for (Employee employee: employees) {
-            numberOftransportations= countTransportations(employee.getId());
-            report.put(employee, numberOftransportations);
-        }
-        return report;
+        TransportCompany company = transportCompanyService.findCompanyById(companyId);
+        Set<Employee> employees = company.getEmployees();
+        return employees.stream()
+                .collect(Collectors.toMap(
+                        employee -> employee,
+                        employee -> countTransportations(employee.getId()),
+                        (existing, replacement) -> existing,
+                        HashMap::new
+                ));
     }
     public long countTransportations(long employeeId) {
         Employee employee = findEmployeeById(employeeId);

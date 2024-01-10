@@ -38,8 +38,7 @@ public class VehicleService {
         vehicleRepo.save(vehicleToSave);
     }
     public void updateVehicleById(long vehicleId, VehicleDTO updatedVehicle) {
-        Vehicle vehicleToUpdate = vehicleRepo.findById(vehicleId)
-                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with id: " + vehicleId));
+        Vehicle vehicleToUpdate = findVehicleById(vehicleId);
 
         VehicleType newType = vehicleTypeService.findVehicleTypeById(updatedVehicle.getVehicleTypeId());
         vehicleToUpdate.setVehicleType(newType);

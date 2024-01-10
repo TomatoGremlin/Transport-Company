@@ -15,5 +15,4 @@ public class EmployeeDTO {
     String name;
     BigDecimal salary;
     long companyId;
-
 }

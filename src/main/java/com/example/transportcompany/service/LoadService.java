@@ -1,6 +1,7 @@
 package com.example.transportcompany.service;
 
 import com.example.transportcompany.dto.LoadDTO;
+import com.example.transportcompany.model.Customer;
 import com.example.transportcompany.model.Load;
 import com.example.transportcompany.repository.LoadRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class LoadService {
@@ -23,8 +26,7 @@ public class LoadService {
         loadRepo.save(loadToSave);
     }
     public void updateLoadById(long loadId, LoadDTO updatedLoad) {
-        Load loadToUpdate = loadRepo.findById(loadId)
-                .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId));
+        Load loadToUpdate = findLoadById(loadId);
 
         double newWeight = updatedLoad.getWeight();
         loadToUpdate.setWeight(newWeight);
@@ -39,6 +41,13 @@ public class LoadService {
 
     public List<Load> findAllLoad() {
         return loadRepo.findAll();
+    }
+
+    public Set<Load> addLoadsToSet(Set<Long>loadIds ){
+        return loadIds.stream()
+                .map(loadId -> loadRepo.findById(loadId)
+                        .orElseThrow(() -> new EntityNotFoundException("Load not found with id: " + loadId)))
+                .collect(Collectors.toSet());
     }
 
 

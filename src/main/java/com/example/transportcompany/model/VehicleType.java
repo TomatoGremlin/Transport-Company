@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -26,17 +27,17 @@ public class VehicleType {
 
     @NotNull(message = "Vehicle type cannot be null")
     @NotBlank(message = "Vehicle type cannot be left blank")
-    @Pattern(regexp = "^([a-z]).*", message = "Vehicle types begin with lowercase letters")
+    @Pattern(regexp = "^([a-z]).*", message = "Vehicle types has to be all lowercase letters")
+    @Size(max = 15, message = "Company name has to be with up to 15 characters")
     @Column(name="type", nullable = false)
     String type;
-
 
     @OneToMany(mappedBy = "vehicleType")
     @JsonIgnore
     Set<Vehicle> vehicles;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "qualifications")
+    @JsonIgnore
     Set<Employee> employees;
 
     @Override
