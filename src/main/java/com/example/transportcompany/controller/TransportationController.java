@@ -4,7 +4,9 @@ import com.example.transportcompany.dto.TransportationDTO;
 import com.example.transportcompany.model.Transportation;
 import com.example.transportcompany.service.TransportationService;
 import com.example.transportcompany.util.TransportationUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,20 +25,33 @@ public class TransportationController {
 
     @PostMapping("/add")
     public ResponseEntity<String> postTransportation(@RequestBody TransportationDTO transportationDTO){
-        transportationService.saveTransportation(transportationDTO);
-        return ResponseEntity.ok("New Transportation added");
+        try {
+            transportationService.saveTransportation(transportationDTO);
+            return ResponseEntity.ok("New Transportation added");
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
     }
 
     @PatchMapping("/edit/{id}")
     public ResponseEntity<String> patchTransportation(@PathVariable Long id, @RequestBody TransportationDTO transportationDTO){
-        transportationService.updateTransportationById(id, transportationDTO);
-        return ResponseEntity.ok("The Transportation has been edited");
+        try {
+            transportationService.updateTransportationById(id, transportationDTO);
+            return ResponseEntity.ok("The Transportation has been edited");
+        } catch (EntityNotFoundException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteTransportation(@PathVariable Long id){
-        transportationService.deleteTransportationById(id);
-        return ResponseEntity.ok("The Transportation has been deleted");
+        try {
+            transportationService.deleteTransportationById(id);
+            return ResponseEntity.ok("The Transportation has been deleted");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{transportationId}/edit/customers")
@@ -53,6 +68,7 @@ public class TransportationController {
     public ResponseEntity<String> deleteCustomers(@PathVariable long transportationId, @RequestBody Set<Long> customerIds){
         transportationService.deleteCustomers(transportationId, customerIds);
         return ResponseEntity.ok("The Customers have been delete from the Transportation");
+
     }
     @PutMapping("/{transportationId}/edit/loads")
     public ResponseEntity<String> editLoads(@PathVariable long transportationId, @RequestBody Set<Long> loadIds){
@@ -92,22 +108,22 @@ public class TransportationController {
     }
 
 
-    @GetMapping("/filterByDestination/{destination}")
-    public ResponseEntity<List<Transportation>> filterByDestination(@PathVariable String destination){
+    @GetMapping("/filterByDestination")
+    public ResponseEntity<List<Transportation>> filterByDestination(@RequestParam String destination){
         List<Transportation>filteredTransportations= transportationService.filterByDestination(destination);
         return ResponseEntity.ok(filteredTransportations);
     }
 
-    @PostMapping("/writeToFile/{fileName}")
-    public ResponseEntity<String> writeToFile(@PathVariable String fileName) {
+    @PostMapping("/writeToFile")
+    public ResponseEntity<String> writeToFile(@RequestParam String fileName, @RequestParam long companyId) {
         String filePath = "FILES/" + fileName;
-        List<Transportation>transportations = transportationService.findAllTransportations();
+        List<Transportation>transportations = transportationService.findByCompany(companyId);
         TransportationUtil.writeTransportations(filePath, transportations);
         return ResponseEntity.ok("Transportations have been written to file");
 
     }
-    @GetMapping("/retrieveFromFile/{fileName}")
-    public ResponseEntity<String> readFromFile(@PathVariable String fileName) {
+    @GetMapping("/retrieveFromFile")
+    public ResponseEntity<String> readFromFile(@RequestParam String fileName) {
         String filePath = "FILES/" + fileName;
         String info = TransportationUtil.readTransportations(filePath);
         return ResponseEntity.ok(info);

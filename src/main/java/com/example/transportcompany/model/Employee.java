@@ -31,14 +31,13 @@ public class Employee {
     String name;
 
     @NotNull(message = "Salary cannot be null")
-    @Positive
     @Digits(integer = 5, fraction = 2, message = "Maximum 5 digits with 2 decimal places allowed")
     @DecimalMin(value = "933", message = "Value must be equal to or greater than 933")
     @Column(name="salary", nullable = false)
     BigDecimal salary;
 
     @NotNull(message = "Employee has to be hired in a Company")
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     @JsonIgnore
     TransportCompany company;

@@ -1,7 +1,9 @@
 package com.example.transportcompany.controller;
 import com.example.transportcompany.dto.VehicleDTO;
 import com.example.transportcompany.service.VehicleService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,15 +24,23 @@ public class VehicleController {
 
     @PatchMapping("/edit/{id}")
     public ResponseEntity<String> patchVehicle(@PathVariable Long id, @RequestBody VehicleDTO vehicleDTO){
-        vehicleService.updateVehicleById(id, vehicleDTO);
-        return ResponseEntity.ok("The Vehicle has been edited");
+        try {
+            vehicleService.updateVehicleById(id, vehicleDTO);
+            return ResponseEntity.ok("The Vehicle has been edited");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteVehicle(@PathVariable Long id){
-        vehicleService.deleteVehicleById(id);
-        return ResponseEntity.ok("The Vehicle has been deleted");
-    }
+        try {
+            vehicleService.deleteVehicleById(id);
+            return ResponseEntity.ok("The Vehicle has been deleted");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
 
+    }
 }
 

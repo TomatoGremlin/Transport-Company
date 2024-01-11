@@ -29,7 +29,7 @@ public class TransportCompany {
     @Column(name = "company_name", nullable = false)
     String companyName;
 
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "company")
     @JsonIgnore
     Set<Employee> employees;
 

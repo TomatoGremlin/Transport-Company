@@ -9,7 +9,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 
 @Getter
@@ -28,7 +27,6 @@ public class TransportationRate {
 
     // price per person
     @NotNull(message = "Customer Rate cannot be null")
-    @Positive
     @Digits(integer = 2, fraction = 2, message = "Maximum 2 digits with 2 decimal places allowed")
     @DecimalMin(value = "1.0", inclusive = true, message = "Customer Rate must be greater than or equal to 1.0 lv")
     @Column(name ="customer_rate", nullable = false)
@@ -36,7 +34,6 @@ public class TransportationRate {
 
     // price per kilogram
     @NotNull(message = "Load Rate cannot be null")
-    @Positive
     @Digits(integer = 2, fraction = 2, message = "Maximum 2 digits with 2 decimal places allowed")
     @DecimalMin(value = "1.0", inclusive = true, message = "Load Rate must be greater than or equal to 1.0 lv")
     @Column(name ="load_rate", nullable = false)

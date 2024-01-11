@@ -3,6 +3,7 @@ package com.example.transportcompany.service;
 import com.example.transportcompany.dto.TransportationDTO;
 import com.example.transportcompany.model.*;
 import com.example.transportcompany.repository.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +34,15 @@ public class TransportationService {
         this.transportCompanyService = transportCompanyService;
     }
 
-
+    /**
+     * Saves a new transportation based on the provided TransportationDTO.
+     *
+     * @param transportationDTO The data transfer object containing transportation information.
+     * @throws IllegalArgumentException If the arrival date is not after the departure date.
+     */
     public void saveTransportation(TransportationDTO transportationDTO) {
+        checkDates(transportationDTO.getArrivalDate(), transportationDTO.getDepartureDate());
+
         Transportation transportationToSave = new Transportation();
         transportationToSave.setStartPoint(transportationDTO.getStartPoint());
         transportationToSave.setEndPoint(transportationDTO.getEndPoint());
@@ -47,10 +55,18 @@ public class TransportationService {
         transportationToSave.setCompany(transportCompany);
         transportationRepo.save(transportationToSave);
     }
+    /**
+     * Updates an existing transportation by ID using the provided TransportationDTO.
+     *
+     * @param transportationId        The ID of the transportation to update.
+     * @param updatedTransportation   The data transfer object containing updated transportation information.
+     * @throws IllegalArgumentException If the arrival date is not after the departure date.
+     * @throws EntityNotFoundException If the transportation with the specified ID is not found.
+     */
     public void updateTransportationById(long transportationId, TransportationDTO updatedTransportation) {
-        Transportation transportationToUpdate = findTransportationById(transportationId);
-               // .orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + transportationId));
+        checkDates(updatedTransportation.getArrivalDate(), updatedTransportation.getDepartureDate());
 
+        Transportation transportationToUpdate = findTransportationById(transportationId);
         String newStartPoint = updatedTransportation.getStartPoint();
         String newEndPoint = updatedTransportation.getEndPoint();
         LocalDate newDepartureDate = updatedTransportation.getDepartureDate();
@@ -67,41 +83,111 @@ public class TransportationService {
         transportationToUpdate.setCompany(newCompany);
         transportationRepo.save(transportationToUpdate);
     }
+
+    // Helper method to check if arrival date is before departure date
+    /**
+     * Checks if the arrival date is before the departure date.
+     *
+     * @param arrivalDate   The date of arrival.
+     * @param departureDate The date of departure.
+     * @throws IllegalArgumentException If the arrival date is not after the departure date.
+     */
+    private void checkDates(LocalDate arrivalDate, LocalDate departureDate) {
+        if (arrivalDate.isBefore(departureDate)) {
+            throw new IllegalArgumentException("Arrival date must be after departure date.");
+        }
+    }
+
+    /**
+     * Deletes a transportation by ID.
+     *
+     * @param id The ID of the transportation to be deleted.
+     * @throws EntityNotFoundException If the transportation with the specified ID is not found.
+     */
     public void deleteTransportationById(long id) {
-        transportationRepo.deleteById(id);
+            findTransportationById(id);
+            transportationRepo.deleteById(id);
     }
+    /**
+     * Finds a transportation by its ID.
+     *
+     * @param id The ID of the transportation to retrieve.
+     * @return The Transportation object corresponding to the given ID.
+     * @throws EntityNotFoundException If the transportation with the specified ID is not found.
+     */
     public Transportation findTransportationById(long id) {
-        return transportationRepo.findById(id).orElse(null);
+        return transportationRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Transportation not found with id: " + id));
     }
+    /**
+     * Retrieves a list of all transportations.
+     *
+     * @return A list containing all transportations.
+     */
     public List<Transportation> findAllTransportations() {
         return transportationRepo.findAll();
     }
 
+    /**
+     * Retrieves transportations associated with a specific company.
+     *
+     * @param companyId The ID of the company to retrieve transportations for.
+     * @return A list of transportations associated with the specified company.
+     */
     public List<Transportation> findByCompany(long companyId){
         return transportationRepo.findByCompanyId(companyId);
     }
 
+    /**
+     * Retrieves transportations associated with a specific employee.
+     *
+     * @param employeeId The ID of the employee to retrieve transportations for.
+     * @return A list of transportations associated with the specified employee.
+     */
     public List<Transportation> findByEmployee(long employeeId){
         return transportationRepo.findByEmployeeId(employeeId);
     }
 
+    /**
+     * Retrieves transportations within a specific period associated with a company.
+     *
+     * @param companyId The ID of the company to retrieve transportations for.
+     * @param fromDate  The start date of the period.
+     * @param toDate    The end date of the period.
+     * @return A list of transportations associated with the specified company within the given period.
+     */
     public List<Transportation> findByPeriodAndCompany(long companyId, LocalDate fromDate, LocalDate toDate){
         return transportationRepo.findByPeriodAndCompany(companyId, fromDate, toDate);
     }
-
+    /**
+     * Assigns an employee to a transportation.
+     *
+     * @param transportationId The ID of the transportation to assign the employee to.
+     * @param employeeId       The ID of the employee to be assigned.
+     */
     public void assignEmployee(long transportationId, long employeeId){
         Transportation transportation = findTransportationById(transportationId);
         Employee employee = employeeService.findEmployeeById(employeeId);
         transportation.setEmployee(employee);
         transportationRepo.save(transportation);
     }
+    /**
+     * Edits loads associated with a transportation.
+     *
+     * @param transportationId The ID of the transportation to edit loads for.
+     * @param loadIds          The set of load IDs to be associated with the transportation.
+     */
     public void editLoads(long transportationId, Set<Long> loadIds){
         Transportation transportation = findTransportationById(transportationId);
         Set<Load>loadsToSave = loadService.addLoadsToSet(loadIds);
         transportation.setLoads(loadsToSave);
         transportationRepo.save(transportation);
     }
-
+    /**
+     * Adds a load to a transportation.
+     *
+     * @param transportationId The ID of the transportation to add the load to.
+     * @param loadId           The ID of the load to be added.
+     */
     public void addLoad(long transportationId, Long loadId) {
         Transportation transportation = findTransportationById(transportationId);
         Load load = loadService.findLoadById(loadId);
@@ -110,6 +196,13 @@ public class TransportationService {
         transportation.setLoads(updatedLoads);
         transportationRepo.save(transportation);
     }
+    /**
+     * Deletes loads from a transportation.
+     *
+     * @param transportationId The ID of the transportation to delete loads from.
+     * @param loadIds          The set of load IDs to be deleted.
+     * @throws RuntimeException If one or more specified loads are not part of the transportation.
+     */
     public void deleteLoads(long transportationId, Set<Long> loadIds){
         Transportation transportation = findTransportationById(transportationId);
         Set<Load> loadsToDelete = loadService.addLoadsToSet(loadIds);
@@ -119,12 +212,25 @@ public class TransportationService {
         }
     }
 
+    /**
+     * Edits customers associated with a transportation.
+     *
+     * @param transportationId The ID of the transportation to edit customers for.
+     * @param customerIds      The set of customer IDs to be associated with the transportation.
+     */
     public void editCustomers(long transportationId, Set<Long> customerIds){
         Transportation transportation = findTransportationById(transportationId);
         Set<Customer>customersToSave = customerService.addCustomersToSet(customerIds);
         transportation.setCustomers(customersToSave);
         transportationRepo.save(transportation);
     }
+
+    /**
+     * Adds a customer to a transportation.
+     *
+     * @param transportationId The ID of the transportation to add the customer to.
+     * @param customerId       The ID of the customer to be added.
+     */
     public void addCustomer(long transportationId, Long customerId) {
         Transportation transportation = findTransportationById(transportationId);
         Customer customer = customerService.findCustomerById(customerId);
@@ -133,6 +239,13 @@ public class TransportationService {
         transportation.setCustomers(updatedCustomers);
         transportationRepo.save(transportation);
     }
+    /**
+     * Deletes customers from a transportation.
+     *
+     * @param transportationId The ID of the transportation to delete customers from.
+     * @param customerIds      The set of customer IDs to be deleted.
+     * @throws RuntimeException If one or more specified customers are not part of the transportation.
+     */
     public void deleteCustomers(long transportationId, Set<Long> customerIds){
         Transportation transportation = findTransportationById(transportationId);
         Set<Customer> customersToDelete = customerService.addCustomersToSet(customerIds);
@@ -142,78 +255,42 @@ public class TransportationService {
         }
     }
 
+    /**
+     * Sorts the list of transportations by start point.
+     *
+     * @return A list of transportations sorted by start point.
+     */
     public List<Transportation> sortByStartPoint() {
         return transportationRepo.sortByStartPoint();
     }
+
+    /**
+     * Sorts the list of transportations by end point.
+     *
+     * @return A list of transportations sorted by end point.
+     */
     public List<Transportation> sortByEndPoint() {
         return transportationRepo.sortByEndPoint();
     }
 
+    /**
+     * Retrieves transportations filtered by destination (end point).
+     *
+     * @param endPoint The destination point to filter transportations by.
+     * @return A list of transportations with the specified destination.
+     */
     public List<Transportation> filterByDestination(String endPoint) {
         return transportationRepo.findByDestination(endPoint);
     }
 
+    /**
+     * Retrieves the number of transportations associated with a company.
+     *
+     * @param companyId The ID of the company to count transportations for.
+     * @return The count of transportations associated with the specified company.
+     */
     public long getCountByCompany(long companyId) {
         return transportationRepo.getCountByCompanyId(companyId);
     }
-
-   /* public BigDecimal sumTransportationRevenue(long transportationId) {
-        Transportation transportation = findTransportationById(transportationId);
-        TransportationRate companyRates =  transportation.getCompany().getTransportationRate();
-        BigDecimal numberCustomers = BigDecimal.valueOf( getNumberOfCustomers(transportation) );
-        BigDecimal totalLoadWeight = BigDecimal.valueOf(sumTotalLoadWeight(transportation));
-        BigDecimal loadRate = companyRates.getLoadRate();
-        BigDecimal customerRate = companyRates.getCustomerRate();
-        return customerRate.multiply(numberCustomers).add(loadRate.multiply(totalLoadWeight));
-    }
-
-    public double sumTotalLoadWeight(Transportation transportation){
-        Set<Load> loads = transportation.getLoads();
-        return loads.stream()
-                .mapToDouble(Load::getWeight)
-                .sum();
-    }
-
-    public int getNumberOfCustomers(Transportation transportation){
-        Set<Customer>customers = transportation.getCustomers();
-        return customers.size();
-    }
-
-
-    public BigDecimal getRevenueByCompany(long companyId) {
-        List<Transportation> transportations = transportationRepo.findByCompanyId(companyId);
-        return transportations.stream()
-                .map(Transportation::getId)
-                .map(this::sumTransportationRevenue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-
-    public BigDecimal getRevenueOfEmployee(long employeeId) {
-        List<Transportation> transportations = transportationRepo.findByEmployeeId(employeeId);
-        return transportations.stream()
-                .map(Transportation::getId)
-                .map(this::sumTransportationRevenue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-    public HashMap<Employee, BigDecimal> getRevenueOfEachEmployee(long companyId) {
-        List<Employee> employees = employeeService.findByCompany(companyId);
-        return employees.stream()
-                .collect(Collectors.toMap(
-                        employee -> employee,
-                        employee -> getRevenueOfEmployee(employee.getId()),
-                        (oldValue, newValue) -> newValue,
-                        HashMap::new
-                ));
-    }
-
-    public BigDecimal getRevenueByTimePeriod(long companyId, LocalDate fromDate, LocalDate toDate ) {
-        List<Transportation> transportations = transportationRepo.findByPeriodAndCompany(companyId, fromDate, toDate);
-        return transportations.stream()
-                .map(Transportation::getId)
-                .map(this::sumTransportationRevenue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }*/
-
 
 }

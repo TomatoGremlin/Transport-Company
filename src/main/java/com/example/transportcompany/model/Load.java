@@ -24,7 +24,6 @@ public class Load {
     long id;
 
     @NotNull(message = "Load weight name cannot be null")
-    @Positive
     @DecimalMin(value = "1.0", inclusive = true, message = "Weight must be at least 1.0 kg")
     @Column(name = "weight", nullable = false)
     double weight;

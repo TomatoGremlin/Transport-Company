@@ -4,7 +4,9 @@ import com.example.transportcompany.dto.EmployeeDTO;
 import com.example.transportcompany.model.Employee;
 import com.example.transportcompany.model.VehicleType;
 import com.example.transportcompany.service.EmployeeService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,14 +31,22 @@ public class EmployeeController {
 
     @PatchMapping("/edit/{id}")
     public ResponseEntity<String> patchEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employeeDTO){
-        employeeService.updateEmployeeById(id, employeeDTO);
-        return ResponseEntity.ok("The Employee has been edited");
+        try {
+            employeeService.updateEmployeeById(id, employeeDTO);
+            return ResponseEntity.ok("The Employee has been edited");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id){
-        employeeService.deleteEmployeeById(id);
-        return ResponseEntity.ok("The Employee has been deleted");
+        try {
+            employeeService.deleteEmployeeById(id);
+            return ResponseEntity.ok("The Employee has been deleted");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PutMapping("/{employeeId}/add-driver-qualification/{vehicleTypeId}")
@@ -59,7 +69,7 @@ public class EmployeeController {
 
     @GetMapping("/filterByQualification/{qualificationId}")
     public ResponseEntity<List<Employee>> filterByQualification(@PathVariable long qualificationId){
-        List<Employee>sortedEmployees = employeeService.findByQualification(qualificationId);
+        List<Employee>sortedEmployees = employeeService.filterByQualification(qualificationId);
         return ResponseEntity.ok(sortedEmployees);
     }
 
@@ -69,9 +79,9 @@ public class EmployeeController {
         return ResponseEntity.ok(sortedEmployees);
     }
 
-    @GetMapping("/filterBySalary/{salary}")
-    public ResponseEntity<List<Employee>> filterBySalary(@PathVariable BigDecimal salary){
-        List<Employee>sortedEmployees = employeeService.findBySalaryGreaterThan(salary);
+    @GetMapping("/filterBySalary")
+    public ResponseEntity<List<Employee>> filterBySalary(@RequestParam BigDecimal salary){
+        List<Employee>sortedEmployees = employeeService.filterBySalaryGreaterThan(salary);
         return ResponseEntity.ok(sortedEmployees);
     }
 
@@ -83,7 +93,7 @@ public class EmployeeController {
     }
     @GetMapping("/number-of-transportations/{employeeId}")
     public ResponseEntity<Long> reportEmployeeNumberTransportations(@PathVariable long employeeId) {
-        long report = employeeService.countTransportations(employeeId);
+        long report = employeeService.countTransportationsOfEmployee(employeeId);
         return ResponseEntity.ok(report);
     }
 

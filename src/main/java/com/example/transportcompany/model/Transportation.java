@@ -53,12 +53,12 @@ public class Transportation {
     boolean paymentStatus;
 
     @NotNull(message = "Company cannot be null")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     @JsonIgnore
     TransportCompany company;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     Employee employee;
 
